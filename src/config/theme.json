@@ -1,0 +1,18 @@
+{
+  "colors": {
+    "primary": "oklch(0.205 0 0)",
+    "secondary": "oklch(0.97 0 0)",
+    "accent": "oklch(0.646 0.222 41.116)",
+    "background": "oklch(1 0 0)",
+    "foreground": "oklch(0.145 0 0)"
+  },
+  "fonts": {
+    "heading": "var(--font-geist-sans)",
+    "body": "var(--font-geist-sans)"
+  },
+  "spacing": {
+    "section": "py-16 md:py-24 lg:py-32",
+    "container": "container mx-auto px-4 md:px-6"
+  },
+  "borderRadius": "0.625rem"
+}

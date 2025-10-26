@@ -1,0 +1,272 @@
+{
+  "metadata": {
+    "title": "Spectrity AI/ML Insights - Transform Your Data into Intelligence",
+    "description": "Leading AI and ML solutions provider delivering cutting-edge insights for businesses worldwide",
+    "keywords": ["AI", "Machine Learning", "Data Analytics", "Business Intelligence", "Insights"]
+  },
+  "navigation": {
+    "logo": {
+      "text": "Spectrity Insights"
+    },
+    "items": [
+      { "label": "Features", "href": "#features" },
+      { "label": "Pricing", "href": "#pricing" },
+      { "label": "Testimonials", "href": "#testimonials" },
+      { "label": "About", "href": "#about" }
+    ],
+    "cta": {
+      "label": "Get Started",
+      "href": "#get-started"
+    }
+  },
+  "sections": [
+    {
+      "type": "hero",
+      "badge": "New: AI-Powered Analytics 2.0",
+      "heading": "Transform Your Data into",
+      "subheading": "Actionable Intelligence",
+      "description": "Harness the power of advanced AI and machine learning to unlock insights from your data. Make data-driven decisions with confidence and scale your business faster.",
+      "buttons": [
+        {
+          "label": "Get Started",
+          "href": "#get-started",
+          "variant": "default"
+        },
+        {
+          "label": "Book Demo",
+          "href": "#book-demo",
+          "variant": "outline"
+        }
+      ]
+    },
+    {
+      "type": "dashboard",
+      "alt": "Spectrity AI/ML Dashboard Preview"
+    },
+    {
+      "type": "features",
+      "badge": "Features",
+      "heading": "Everything you need to succeed",
+      "description": "Comprehensive AI/ML tools designed for modern businesses",
+      "layout": "grid",
+      "features": [
+        {
+          "icon": "brain",
+          "title": "Advanced AI Models",
+          "description": "State-of-the-art machine learning models trained on diverse datasets for accurate predictions"
+        },
+        {
+          "icon": "activity",
+          "title": "Real-time Analytics",
+          "description": "Monitor and analyze your data in real-time with powerful dashboards and visualizations"
+        },
+        {
+          "icon": "shield",
+          "title": "Enterprise Security",
+          "description": "Bank-grade encryption and security measures to protect your sensitive data"
+        },
+        {
+          "icon": "zap",
+          "title": "Lightning Fast",
+          "description": "Optimized infrastructure delivering results in milliseconds, not minutes"
+        },
+        {
+          "icon": "users",
+          "title": "Team Collaboration",
+          "description": "Share insights and collaborate seamlessly with your team in real-time"
+        },
+        {
+          "icon": "code",
+          "title": "Developer API",
+          "description": "Comprehensive RESTful API with SDKs for popular programming languages"
+        }
+      ]
+    },
+    {
+      "type": "pricing",
+      "badge": "Pricing",
+      "heading": "Choose the perfect plan for you",
+      "description": "Flexible pricing options for teams of all sizes",
+      "plans": [
+        {
+          "name": "Starter",
+          "price": "$29",
+          "period": "per month",
+          "description": "Perfect for individuals and small projects",
+          "features": [
+            "Up to 10,000 API calls/month",
+            "Basic AI models",
+            "Email support",
+            "Community access",
+            "Basic analytics"
+          ],
+          "buttonText": "Start Free Trial",
+          "buttonHref": "#trial"
+        },
+        {
+          "name": "Professional",
+          "price": "$99",
+          "period": "per month",
+          "description": "For growing teams and businesses",
+          "features": [
+            "Up to 100,000 API calls/month",
+            "Advanced AI models",
+            "Priority support",
+            "Custom integrations",
+            "Advanced analytics",
+            "Team collaboration"
+          ],
+          "highlighted": true,
+          "buttonText": "Get Started",
+          "buttonHref": "#trial"
+        },
+        {
+          "name": "Enterprise",
+          "price": "Custom",
+          "period": "contact us",
+          "description": "For large organizations with specific needs",
+          "features": [
+            "Unlimited API calls",
+            "Custom AI model training",
+            "24/7 dedicated support",
+            "On-premise deployment",
+            "Advanced security features",
+            "SLA guarantee",
+            "Custom contracts"
+          ],
+          "buttonText": "Contact Sales",
+          "buttonHref": "#contact"
+        }
+      ]
+    },
+    {
+      "type": "testimonials",
+      "badge": "Testimonials",
+      "heading": "Loved by teams worldwide",
+      "description": "See what our customers have to say about Spectrity Insights",
+      "testimonials": [
+        {
+          "name": "Sarah Johnson",
+          "role": "CTO",
+          "company": "TechCorp Inc.",
+          "content": "Spectrity Insights has transformed how we analyze our data. The AI models are incredibly accurate and the insights have directly contributed to a 40% increase in revenue.",
+          "rating": 5
+        },
+        {
+          "name": "Michael Chen",
+          "role": "Data Scientist",
+          "company": "DataFlow Solutions",
+          "content": "The API is incredibly well-documented and easy to integrate. We were up and running in less than a day. The real-time analytics are a game changer.",
+          "rating": 5
+        },
+        {
+          "name": "Emily Rodriguez",
+          "role": "VP of Operations",
+          "company": "Global Enterprises",
+          "content": "Outstanding platform with exceptional support. The team collaboration features have made our workflow so much more efficient.",
+          "rating": 5
+        }
+      ]
+    },
+    {
+      "type": "faq",
+      "badge": "FAQ",
+      "heading": "Frequently Asked Questions",
+      "description": "Everything you need to know about Spectrity Insights",
+      "faqs": [
+        {
+          "question": "What is Spectrity AI/ML Insights?",
+          "answer": "Spectrity Insights is a comprehensive AI and machine learning platform that helps businesses transform their data into actionable intelligence. We provide state-of-the-art models, real-time analytics, and enterprise-grade security to help you make better data-driven decisions."
+        },
+        {
+          "question": "How does the pricing work?",
+          "answer": "We offer flexible pricing plans to suit teams of all sizes. Our Starter plan begins at $29/month for individuals and small projects, while our Professional plan at $99/month is perfect for growing teams. For large organizations, we offer custom Enterprise solutions with dedicated support and tailored features."
+        },
+        {
+          "question": "Is my data secure?",
+          "answer": "Absolutely. We implement bank-grade encryption and enterprise security measures to protect your sensitive data. All data is encrypted both in transit and at rest, and we comply with industry-standard security certifications including SOC 2 and ISO 27001."
+        },
+        {
+          "question": "Can I try Spectrity Insights before purchasing?",
+          "answer": "Yes! We offer a free trial on all our plans so you can experience the full power of our platform before making a commitment. No credit card required to start your trial."
+        },
+        {
+          "question": "What kind of support do you offer?",
+          "answer": "We provide email support for Starter plans, priority support for Professional plans, and 24/7 dedicated support for Enterprise customers. All plans include access to our comprehensive documentation, tutorials, and community forums."
+        },
+        {
+          "question": "How easy is it to integrate with existing systems?",
+          "answer": "Very easy! We provide a comprehensive RESTful API with SDKs for popular programming languages including Python, JavaScript, Java, and more. Most customers are up and running within a few hours, with our detailed documentation and code examples to guide you."
+        }
+      ]
+    },
+    {
+      "type": "cta",
+      "heading": "Ready to get started?",
+      "description": "Join thousands of companies using Spectrity Insights to make better data-driven decisions",
+      "buttons": [
+        {
+          "label": "Start Free Trial",
+          "href": "#trial",
+          "variant": "default"
+        },
+        {
+          "label": "Contact Sales",
+          "href": "#contact",
+          "variant": "outline"
+        }
+      ]
+    },
+    {
+      "type": "footer",
+      "logo": {
+        "text": "Spectrity Insights"
+      },
+      "description": "Advanced AI and ML solutions for modern businesses. Transform your data into actionable intelligence.",
+      "columns": [
+        {
+          "title": "Product",
+          "links": [
+            { "label": "Features", "href": "#features" },
+            { "label": "Pricing", "href": "#pricing" },
+            { "label": "API", "href": "#api" },
+            { "label": "Documentation", "href": "#docs" }
+          ]
+        },
+        {
+          "title": "Company",
+          "links": [
+            { "label": "About", "href": "#about" },
+            { "label": "Blog", "href": "#blog" },
+            { "label": "Careers", "href": "#careers" },
+            { "label": "Contact", "href": "#contact" }
+          ]
+        },
+        {
+          "title": "Resources",
+          "links": [
+            { "label": "Help Center", "href": "#help" },
+            { "label": "Community", "href": "#community" },
+            { "label": "Tutorials", "href": "#tutorials" },
+            { "label": "Status", "href": "#status" }
+          ]
+        },
+        {
+          "title": "Legal",
+          "links": [
+            { "label": "Privacy", "href": "#privacy" },
+            { "label": "Terms", "href": "#terms" },
+            { "label": "Security", "href": "#security" },
+            { "label": "Compliance", "href": "#compliance" }
+          ]
+        }
+      ],
+      "socialLinks": [
+        { "platform": "Twitter", "href": "https://twitter.com", "icon": "twitter" },
+        { "platform": "LinkedIn", "href": "https://linkedin.com", "icon": "linkedin" },
+        { "platform": "GitHub", "href": "https://github.com", "icon": "github" }
+      ],
+      "copyright": "© 2025 Spectrity Insights. All rights reserved."
+    }
+  ]
+}
