@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { BookDemoForm } from "@/components/BookDemoForm";
 import type { HeroSection } from "@/types/landing-page";
 
 interface HeroProps {
@@ -31,16 +32,30 @@ export function Hero({ config }: HeroProps) {
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-2.5 pt-2">
-              {config.buttons.map((button, index) => (
-                <Button
-                  key={index}
-                  asChild
-                  variant={button.variant}
-                  size="default"
-                >
-                  <Link href={button.href}>{button.label}</Link>
-                </Button>
-              ))}
+              {config.buttons.map((button, index) => {
+                // Check if this is the Book Demo button
+                if (button.label === "Book Demo") {
+                  return (
+                    <BookDemoForm key={index}>
+                      <Button variant={button.variant} size="default">
+                        {button.label}
+                      </Button>
+                    </BookDemoForm>
+                  );
+                }
+
+                // Regular button with link
+                return (
+                  <Button
+                    key={index}
+                    asChild
+                    variant={button.variant}
+                    size="default"
+                  >
+                    <Link href={button.href}>{button.label}</Link>
+                  </Button>
+                );
+              })}
             </div>
           </div>
 
