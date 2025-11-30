@@ -2,10 +2,20 @@ import type { LandingPageConfig, ThemeConfig } from "@/types/landing-page";
 import landingPageData from "@/config/landing-page.json";
 import themeData from "@/config/theme.json";
 
+// Cache to prevent duplicate imports and memory waste
+let cachedLandingPageConfig: LandingPageConfig | null = null;
+let cachedThemeConfig: ThemeConfig | null = null;
+
 export function getLandingPageConfig(): LandingPageConfig {
-  return landingPageData as LandingPageConfig;
+  if (!cachedLandingPageConfig) {
+    cachedLandingPageConfig = landingPageData as LandingPageConfig;
+  }
+  return cachedLandingPageConfig;
 }
 
 export function getThemeConfig(): ThemeConfig {
-  return themeData as ThemeConfig;
+  if (!cachedThemeConfig) {
+    cachedThemeConfig = themeData as ThemeConfig;
+  }
+  return cachedThemeConfig;
 }

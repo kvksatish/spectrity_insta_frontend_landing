@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +12,23 @@ interface HeroProps {
 }
 
 export function Hero({ config }: HeroProps) {
+  // Pause animations when page is not visible to save memory/CPU
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      const animations = document.querySelectorAll('.animate-pulse, .animate-float');
+      if (document.hidden) {
+        animations.forEach(el => (el as HTMLElement).style.animationPlayState = 'paused');
+      } else {
+        animations.forEach(el => (el as HTMLElement).style.animationPlayState = 'running');
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
   return (
     <section className="py-12 md:py-16 lg:py-20">
       <div className="container mx-auto px-4 md:px-6">

@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -26,19 +27,26 @@ export function Testimonials({ config }: TestimonialsProps) {
           </p>
         </div>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
-          {config.testimonials.map((testimonial, index) => (
-            <Card key={index} className="border border-border/40 shadow-sm bg-background/50 backdrop-blur">
-              <CardContent className="pt-8 pb-6 px-6 space-y-4">
-                {testimonial.rating && (
-                  <div className="flex gap-0.5">
-                    {Array.from({ length: testimonial.rating }).map((_, i) => (
-                      <Star
-                        key={i}
-                        className="w-4 h-4 fill-primary/80 text-primary/80"
-                      />
-                    ))}
-                  </div>
-                )}
+          {config.testimonials.map((testimonial, index) => {
+            // Memoize star array to prevent re-creation on every render
+            const stars = useMemo(
+              () => Array.from({ length: testimonial.rating || 0 }, (_, i) => i),
+              [testimonial.rating]
+            );
+
+            return (
+              <Card key={index} className="border border-border/40 shadow-sm bg-background/50 backdrop-blur">
+                <CardContent className="pt-8 pb-6 px-6 space-y-4">
+                  {testimonial.rating && (
+                    <div className="flex gap-0.5">
+                      {stars.map((i) => (
+                        <Star
+                          key={i}
+                          className="w-4 h-4 fill-primary/80 text-primary/80"
+                        />
+                      ))}
+                    </div>
+                  )}
                 <p className="text-sm text-foreground/70 leading-relaxed">
                   &quot;{testimonial.content}&quot;
                 </p>
@@ -62,7 +70,8 @@ export function Testimonials({ config }: TestimonialsProps) {
                 </div>
               </CardContent>
             </Card>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

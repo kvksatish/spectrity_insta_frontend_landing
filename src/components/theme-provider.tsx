@@ -13,6 +13,7 @@ type ThemeProviderState = {
   theme: Theme;
   setTheme: (theme: Theme) => void;
   toggleTheme: () => void;
+  mounted: boolean;
 };
 
 const ThemeProviderContext = createContext<ThemeProviderState | undefined>(
@@ -28,13 +29,31 @@ export function ThemeProvider({
 
   useEffect(() => {
     setMounted(true);
+
     // Get theme from localStorage or system preference
     const storedTheme = localStorage.getItem("theme") as Theme | null;
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
     if (storedTheme) {
       setTheme(storedTheme);
-    } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+    } else if (mediaQuery.matches) {
       setTheme("dark");
     }
+
+    // Listen for system theme changes
+    const handleChange = (e: MediaQueryListEvent) => {
+      // Only auto-update if user hasn't set a preference
+      if (!localStorage.getItem("theme")) {
+        setTheme(e.matches ? "dark" : "light");
+      }
+    };
+
+    mediaQuery.addEventListener("change", handleChange);
+
+    // Cleanup event listener on unmount
+    return () => {
+      mediaQuery.removeEventListener("change", handleChange);
+    };
   }, []);
 
   useEffect(() => {
@@ -54,6 +73,7 @@ export function ThemeProvider({
     theme,
     setTheme,
     toggleTheme,
+    mounted,
   };
 
   return (
