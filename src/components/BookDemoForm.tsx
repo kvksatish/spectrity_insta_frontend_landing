@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -9,7 +10,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -31,24 +31,31 @@ export function BookDemoForm({ children }: BookDemoFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // TODO: Integrate with your backend API
-    // Example API integration:
-    /*
+    // API integration with environment variables
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const apiTimeout = Number(process.env.NEXT_PUBLIC_API_TIMEOUT) || 30000;
+
     try {
-      const response = await fetch('/api/book-demo', {
-        method: 'POST',
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), apiTimeout);
+
+      const response = await fetch(`${apiUrl}/book-demo`, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
+        signal: controller.signal,
       });
 
+      clearTimeout(timeoutId);
+
       if (!response.ok) {
-        throw new Error('Failed to submit form');
+        throw new Error("Failed to submit form");
       }
 
-      const result = await response.json();
-      alert('Thank you for your interest! We\'ll get back to you soon.');
+      await response.json();
+      alert("Thank you for your interest! We'll get back to you soon.");
 
       // Reset form and close dialog
       setFormData({
@@ -60,24 +67,13 @@ export function BookDemoForm({ children }: BookDemoFormProps) {
       });
       setOpen(false);
     } catch (error) {
-      console.error('Form submission error:', error);
-      alert('There was an error submitting the form. Please try again.');
+      console.error("Form submission error:", error);
+      if (error instanceof Error && error.name === "AbortError") {
+        alert("Request timed out. Please try again.");
+      } else {
+        alert("There was an error submitting the form. Please try again.");
+      }
     }
-    */
-
-    // For now, just log and show alert (remove this when you add API integration)
-    console.log("Form submitted:", formData);
-    alert("Thank you for your interest! We'll get back to you soon.");
-
-    // Reset form and close dialog
-    setFormData({
-      name: "",
-      companyName: "",
-      aiSearchEngines: "",
-      enterprisePlan: "",
-      budget: "",
-    });
-    setOpen(false);
   };
 
   const isFormValid =

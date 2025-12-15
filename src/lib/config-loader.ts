@@ -1,6 +1,6 @@
-import type { LandingPageConfig, ThemeConfig } from "@/types/landing-page";
 import landingPageData from "@/config/landing-page.json";
 import themeData from "@/config/theme.json";
+import type { LandingPageConfig, ThemeConfig } from "@/types/landing-page";
 
 // Cache to prevent duplicate imports and memory waste
 let cachedLandingPageConfig: LandingPageConfig | null = null;

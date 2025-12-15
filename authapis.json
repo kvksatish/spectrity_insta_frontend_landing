@@ -1,0 +1,3005 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Instagram Scraper Backend API",
+    "description": "API documentation for Instagram Scraper Backend. All API endpoints are prefixed with `/api`.",
+    "version": "v1",
+    "contact": {
+      "name": "API Support",
+      "email": "support@spectrity.com"
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT token obtained from login or OAuth endpoints"
+      }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "User unique identifier"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "User email address"
+          },
+          "firstName": {
+            "type": "string",
+            "nullable": true,
+            "description": "User first name"
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": true,
+            "description": "User last name"
+          },
+          "role": {
+            "type": "string",
+            "enum": ["USER", "ADMIN"],
+            "description": "User role"
+          },
+          "provider": {
+            "type": "string",
+            "enum": ["LOCAL", "GOOGLE"],
+            "description": "Authentication provider"
+          },
+          "isEmailVerified": {
+            "type": "boolean",
+            "description": "Email verification status"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Account active status"
+          },
+          "avatarUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "User avatar URL"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Account creation timestamp"
+          },
+          "lastLoginAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Last login timestamp"
+          }
+        }
+      },
+      "Session": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Session unique identifier"
+          },
+          "userId": {
+            "type": "string",
+            "description": "User ID associated with session"
+          },
+          "ipAddress": {
+            "type": "string",
+            "nullable": true,
+            "description": "IP address of session"
+          },
+          "userAgent": {
+            "type": "string",
+            "nullable": true,
+            "description": "User agent string"
+          },
+          "deviceInfo": {
+            "type": "string",
+            "nullable": true,
+            "description": "Device information"
+          },
+          "loginProvider": {
+            "type": "string",
+            "enum": ["LOCAL", "GOOGLE"],
+            "description": "Login provider"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Session creation timestamp"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Session expiration timestamp"
+          },
+          "lastActivityAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last activity timestamp"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [false]
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "description": "Error code"
+              },
+              "message": {
+                "type": "string",
+                "description": "Error message"
+              },
+              "statusCode": {
+                "type": "integer",
+                "description": "HTTP status code"
+              },
+              "details": {
+                "type": "object",
+                "nullable": true,
+                "description": "Additional error details"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "API Information",
+        "tags": ["root"],
+        "description": "Returns basic API information and available endpoints",
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        },
+                        "version": {
+                          "type": "string"
+                        },
+                        "environment": {
+                          "type": "string"
+                        },
+                        "endpoints": {
+                          "type": "object",
+                          "properties": {
+                            "health": {
+                              "type": "string"
+                            },
+                            "api": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health": {
+      "get": {
+        "summary": "Health Check",
+        "tags": ["health"],
+        "description": "Returns the current health status of the API server",
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string"
+                        },
+                        "timestamp": {
+                          "type": "string"
+                        },
+                        "uptime": {
+                          "type": "number"
+                        },
+                        "environment": {
+                          "type": "string"
+                        },
+                        "version": {
+                          "type": "string"
+                        },
+                        "memory": {
+                          "type": "object",
+                          "properties": {
+                            "total": {
+                              "type": "string"
+                            },
+                            "free": {
+                              "type": "string"
+                            },
+                            "usage": {
+                              "type": "string"
+                            },
+                            "usedMB": {
+                              "type": "number"
+                            }
+                          }
+                        },
+                        "dependencies": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "name": {
+                                "type": "string"
+                              },
+                              "status": {
+                                "type": "string"
+                              },
+                              "message": {
+                                "type": "string"
+                              },
+                              "circuitBreaker": {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string"
+                                  },
+                                  "failureCount": {
+                                    "type": "number"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "summary": {
+                          "type": "object",
+                          "properties": {
+                            "total": {
+                              "type": "number"
+                            },
+                            "healthy": {
+                              "type": "number"
+                            },
+                            "degraded": {
+                              "type": "number"
+                            },
+                            "unhealthy": {
+                              "type": "number"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/": {
+      "get": {
+        "summary": "API Version Info",
+        "tags": ["root"],
+        "description": "Returns information about the current API version",
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        },
+                        "version": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/instagram/scrape": {
+      "post": {
+        "summary": "Scrape Instagram (Real-time)",
+        "tags": ["instagram"],
+        "description": "Scrapes Instagram data immediately and returns results. No queue - instant response with scraped data.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["url"],
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "Instagram profile, post, or reel URL to scrape",
+                    "example": "https://www.instagram.com/humansofny/"
+                  },
+                  "resultsType": {
+                    "type": "string",
+                    "enum": ["posts", "comments", "details"],
+                    "default": "posts",
+                    "description": "Type of results to retrieve"
+                  },
+                  "resultsLimit": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 1000,
+                    "default": 200,
+                    "description": "Maximum number of results to retrieve"
+                  },
+                  "addParentData": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Include parent data in results"
+                  },
+                  "instagramPsid": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "description": "Instagram Page-Scoped ID for user tracking"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/api/v1/webhook/meta": {
+      "get": {
+        "summary": "Meta Webhook Verification",
+        "tags": ["webhook"],
+        "description": "Verifies the webhook endpoint with Meta. Called by Meta during setup.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "hub.mode",
+            "required": true,
+            "description": "Webhook mode (should be \"subscribe\")"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "hub.verify_token",
+            "required": true,
+            "description": "Verification token"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "hub.challenge",
+            "required": true,
+            "description": "Challenge string to echo back"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the challenge string",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "description": "Returns the challenge string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Meta Webhook Event Handler",
+        "tags": ["webhook"],
+        "description": "Receives and processes incoming messages and events from Meta Messenger/Instagram.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "object": {
+                    "type": "string",
+                    "description": "Object type (e.g., \"instagram\")"
+                  },
+                  "entry": {
+                    "type": "array",
+                    "description": "Array of webhook entries",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "time": {
+                          "type": "number"
+                        },
+                        "messaging": {
+                          "type": "array",
+                          "description": "Messaging events",
+                          "items": {
+                            "type": "object"
+                          }
+                        },
+                        "changes": {
+                          "type": "array",
+                          "description": "Change events",
+                          "items": {
+                            "type": "object"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "required": ["object", "entry"]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/email/send": {
+      "post": {
+        "summary": "Send email",
+        "tags": ["email"],
+        "description": "Send email via API (⚠️ Currently PUBLIC - auth not implemented yet)",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["to", "subject"],
+                "properties": {
+                  "to": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "toName": {
+                    "type": "string"
+                  },
+                  "cc": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "email"
+                    }
+                  },
+                  "bcc": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "email"
+                    }
+                  },
+                  "subject": {
+                    "type": "string"
+                  },
+                  "html": {
+                    "type": "string"
+                  },
+                  "text": {
+                    "type": "string"
+                  },
+                  "templateName": {
+                    "type": "string"
+                  },
+                  "templateData": {
+                    "type": "object"
+                  },
+                  "replyTo": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "context": {
+                    "type": "string"
+                  },
+                  "priority": {
+                    "type": "number",
+                    "minimum": 1,
+                    "maximum": 10
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "emailId": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        },
+                        "sentAt": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/email/logs": {
+      "get": {
+        "summary": "Get email logs",
+        "tags": ["email"],
+        "description": "Get paginated email logs (⚠️ Currently PUBLIC - auth not implemented yet)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "toEmail",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "status",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "context",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "userId",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "limit",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "offset",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/api/v1/email/retry/{emailId}": {
+      "post": {
+        "summary": "Retry failed email",
+        "tags": ["email"],
+        "description": "Retry sending a failed email (⚠️ Currently PUBLIC - auth not implemented yet)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "emailId",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/api/v1/email/opt-out": {
+      "post": {
+        "summary": "Opt out of emails",
+        "tags": ["email"],
+        "description": "Unsubscribe from all emails (Public endpoint)",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "reason": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/api/v1/email/webhook/brevo": {
+      "post": {
+        "summary": "Brevo webhook",
+        "tags": ["email"],
+        "description": "Receive delivery status updates from Brevo (HMAC verified)",
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/api/v1/auth/register": {
+      "post": {
+        "summary": "Register a new user",
+        "tags": ["auth"],
+        "description": "Create a new user account with email and password",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "firstName": {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 100
+                  },
+                  "lastName": {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 100
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "User registered successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "User registered successfully",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "User unique identifier"
+                        },
+                        "email": {
+                          "type": "string",
+                          "format": "email",
+                          "description": "User email address"
+                        },
+                        "firstName": {
+                          "type": "string",
+                          "nullable": true,
+                          "description": "User first name"
+                        },
+                        "lastName": {
+                          "type": "string",
+                          "nullable": true,
+                          "description": "User last name"
+                        },
+                        "role": {
+                          "type": "string",
+                          "enum": ["USER", "ADMIN"],
+                          "description": "User role"
+                        },
+                        "provider": {
+                          "type": "string",
+                          "enum": ["LOCAL", "GOOGLE"],
+                          "description": "Authentication provider"
+                        },
+                        "isEmailVerified": {
+                          "type": "boolean",
+                          "description": "Email verification status"
+                        },
+                        "isActive": {
+                          "type": "boolean",
+                          "description": "Account active status"
+                        },
+                        "avatarUrl": {
+                          "type": "string",
+                          "nullable": true,
+                          "description": "User avatar URL"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "description": "Account creation timestamp"
+                        },
+                        "lastLoginAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "nullable": true,
+                          "description": "Last login timestamp"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Bad Request",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "description": "Error code"
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Error message"
+                        },
+                        "statusCode": {
+                          "type": "integer",
+                          "description": "HTTP status code"
+                        },
+                        "details": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "Additional error details"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Rate Limit Exceeded",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "description": "Error code"
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Error message"
+                        },
+                        "statusCode": {
+                          "type": "integer",
+                          "description": "HTTP status code"
+                        },
+                        "details": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "Additional error details"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "summary": "Login user",
+        "tags": ["auth"],
+        "description": "Authenticate with email and password",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "rememberMe": {
+                    "type": "boolean",
+                    "default": false
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Login successful",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "user": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "description": "User unique identifier"
+                            },
+                            "email": {
+                              "type": "string",
+                              "format": "email",
+                              "description": "User email address"
+                            },
+                            "firstName": {
+                              "type": "string",
+                              "nullable": true,
+                              "description": "User first name"
+                            },
+                            "lastName": {
+                              "type": "string",
+                              "nullable": true,
+                              "description": "User last name"
+                            },
+                            "role": {
+                              "type": "string",
+                              "enum": ["USER", "ADMIN"],
+                              "description": "User role"
+                            },
+                            "provider": {
+                              "type": "string",
+                              "enum": ["LOCAL", "GOOGLE"],
+                              "description": "Authentication provider"
+                            },
+                            "isEmailVerified": {
+                              "type": "boolean",
+                              "description": "Email verification status"
+                            },
+                            "isActive": {
+                              "type": "boolean",
+                              "description": "Account active status"
+                            },
+                            "avatarUrl": {
+                              "type": "string",
+                              "nullable": true,
+                              "description": "User avatar URL"
+                            },
+                            "createdAt": {
+                              "type": "string",
+                              "format": "date-time",
+                              "description": "Account creation timestamp"
+                            },
+                            "lastLoginAt": {
+                              "type": "string",
+                              "format": "date-time",
+                              "nullable": true,
+                              "description": "Last login timestamp"
+                            }
+                          }
+                        },
+                        "accessToken": {
+                          "type": "string",
+                          "description": "JWT access token"
+                        },
+                        "refreshToken": {
+                          "type": "string",
+                          "description": "Refresh token for obtaining new access tokens"
+                        },
+                        "expiresAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "description": "Token expiration timestamp"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Bad Request",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "description": "Error code"
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Error message"
+                        },
+                        "statusCode": {
+                          "type": "integer",
+                          "description": "HTTP status code"
+                        },
+                        "details": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "Additional error details"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Unauthorized",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "description": "Error code"
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Error message"
+                        },
+                        "statusCode": {
+                          "type": "integer",
+                          "description": "HTTP status code"
+                        },
+                        "details": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "Additional error details"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Forbidden",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "description": "Error code"
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Error message"
+                        },
+                        "statusCode": {
+                          "type": "integer",
+                          "description": "HTTP status code"
+                        },
+                        "details": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "Additional error details"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Rate Limit Exceeded",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "description": "Error code"
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Error message"
+                        },
+                        "statusCode": {
+                          "type": "integer",
+                          "description": "HTTP status code"
+                        },
+                        "details": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "Additional error details"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/refresh": {
+      "post": {
+        "summary": "Refresh access token",
+        "tags": ["auth"],
+        "description": "Get a new access token using refresh token",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["refreshToken"],
+                "properties": {
+                  "refreshToken": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Token refreshed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Token refreshed successfully",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "accessToken": {
+                          "type": "string",
+                          "description": "New JWT access token"
+                        },
+                        "refreshToken": {
+                          "type": "string",
+                          "description": "New refresh token (rotated)"
+                        },
+                        "expiresAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "description": "Token expiration timestamp"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Unauthorized",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "description": "Error code"
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Error message"
+                        },
+                        "statusCode": {
+                          "type": "integer",
+                          "description": "HTTP status code"
+                        },
+                        "details": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "Additional error details"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Forbidden",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "description": "Error code"
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Error message"
+                        },
+                        "statusCode": {
+                          "type": "integer",
+                          "description": "HTTP status code"
+                        },
+                        "details": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "Additional error details"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Rate Limit Exceeded",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "description": "Error code"
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Error message"
+                        },
+                        "statusCode": {
+                          "type": "integer",
+                          "description": "HTTP status code"
+                        },
+                        "details": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "Additional error details"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/verify-email": {
+      "post": {
+        "summary": "Verify email address",
+        "tags": ["auth"],
+        "description": "Verify email address using token from email",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["token"],
+                "properties": {
+                  "token": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Email verified successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Email verified successfully",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Bad Request",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "description": "Error code"
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Error message"
+                        },
+                        "statusCode": {
+                          "type": "integer",
+                          "description": "HTTP status code"
+                        },
+                        "details": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "Additional error details"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Rate Limit Exceeded",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "description": "Error code"
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Error message"
+                        },
+                        "statusCode": {
+                          "type": "integer",
+                          "description": "HTTP status code"
+                        },
+                        "details": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "Additional error details"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/resend-verification": {
+      "post": {
+        "summary": "Resend verification email",
+        "tags": ["auth"],
+        "description": "Request a new verification email",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Verification email sent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Verification email sent",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Bad Request",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "description": "Error code"
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Error message"
+                        },
+                        "statusCode": {
+                          "type": "integer",
+                          "description": "HTTP status code"
+                        },
+                        "details": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "Additional error details"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Rate Limit Exceeded",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "description": "Error code"
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Error message"
+                        },
+                        "statusCode": {
+                          "type": "integer",
+                          "description": "HTTP status code"
+                        },
+                        "details": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "Additional error details"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/forgot-password": {
+      "post": {
+        "summary": "Request password reset",
+        "tags": ["auth"],
+        "description": "Send password reset email",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Password reset email sent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Password reset email sent",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Bad Request",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "description": "Error code"
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Error message"
+                        },
+                        "statusCode": {
+                          "type": "integer",
+                          "description": "HTTP status code"
+                        },
+                        "details": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "Additional error details"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Rate Limit Exceeded",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "description": "Error code"
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Error message"
+                        },
+                        "statusCode": {
+                          "type": "integer",
+                          "description": "HTTP status code"
+                        },
+                        "details": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "Additional error details"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/reset-password": {
+      "post": {
+        "summary": "Reset password",
+        "tags": ["auth"],
+        "description": "Reset password using token from email",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["token", "password"],
+                "properties": {
+                  "token": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Password reset successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Password reset successful",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Bad Request",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "description": "Error code"
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Error message"
+                        },
+                        "statusCode": {
+                          "type": "integer",
+                          "description": "HTTP status code"
+                        },
+                        "details": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "Additional error details"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Rate Limit Exceeded",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "description": "Error code"
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Error message"
+                        },
+                        "statusCode": {
+                          "type": "integer",
+                          "description": "HTTP status code"
+                        },
+                        "details": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "Additional error details"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/google": {
+      "get": {
+        "summary": "Google OAuth login",
+        "tags": ["auth"],
+        "description": "Initiate Google OAuth authentication flow",
+        "responses": {
+          "200": {
+            "description": "Google OAuth authorization URL generated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Google OAuth authorization URL generated",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "authUrl": {
+                          "type": "string",
+                          "format": "uri",
+                          "description": "Google OAuth authorization URL to redirect user to"
+                        },
+                        "state": {
+                          "type": "string",
+                          "description": "CSRF state token for security verification"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Internal Server Error",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "description": "Error code"
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Error message"
+                        },
+                        "statusCode": {
+                          "type": "integer",
+                          "description": "HTTP status code"
+                        },
+                        "details": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "Additional error details"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/google/callback": {
+      "get": {
+        "summary": "Google OAuth callback",
+        "tags": ["auth"],
+        "description": "Handle callback from Google OAuth (redirect endpoint)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "code",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "state",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "error",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Google authentication successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Google authentication successful",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "user": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "description": "User unique identifier"
+                            },
+                            "email": {
+                              "type": "string",
+                              "format": "email",
+                              "description": "User email address"
+                            },
+                            "firstName": {
+                              "type": "string",
+                              "nullable": true,
+                              "description": "User first name"
+                            },
+                            "lastName": {
+                              "type": "string",
+                              "nullable": true,
+                              "description": "User last name"
+                            },
+                            "role": {
+                              "type": "string",
+                              "enum": ["USER", "ADMIN"],
+                              "description": "User role"
+                            },
+                            "provider": {
+                              "type": "string",
+                              "enum": ["LOCAL", "GOOGLE"],
+                              "description": "Authentication provider"
+                            },
+                            "isEmailVerified": {
+                              "type": "boolean",
+                              "description": "Email verification status"
+                            },
+                            "isActive": {
+                              "type": "boolean",
+                              "description": "Account active status"
+                            },
+                            "avatarUrl": {
+                              "type": "string",
+                              "nullable": true,
+                              "description": "User avatar URL"
+                            },
+                            "createdAt": {
+                              "type": "string",
+                              "format": "date-time",
+                              "description": "Account creation timestamp"
+                            },
+                            "lastLoginAt": {
+                              "type": "string",
+                              "format": "date-time",
+                              "nullable": true,
+                              "description": "Last login timestamp"
+                            }
+                          }
+                        },
+                        "accessToken": {
+                          "type": "string",
+                          "description": "JWT access token"
+                        },
+                        "refreshToken": {
+                          "type": "string",
+                          "description": "Refresh token for obtaining new access tokens"
+                        },
+                        "expiresAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "description": "Token expiration timestamp"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Bad Request",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "description": "Error code"
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Error message"
+                        },
+                        "statusCode": {
+                          "type": "integer",
+                          "description": "HTTP status code"
+                        },
+                        "details": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "Additional error details"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Unauthorized",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "description": "Error code"
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Error message"
+                        },
+                        "statusCode": {
+                          "type": "integer",
+                          "description": "HTTP status code"
+                        },
+                        "details": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "Additional error details"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Forbidden",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "description": "Error code"
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Error message"
+                        },
+                        "statusCode": {
+                          "type": "integer",
+                          "description": "HTTP status code"
+                        },
+                        "details": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "Additional error details"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Rate Limit Exceeded",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "description": "Error code"
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Error message"
+                        },
+                        "statusCode": {
+                          "type": "integer",
+                          "description": "HTTP status code"
+                        },
+                        "details": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "Additional error details"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/me": {
+      "get": {
+        "summary": "Get current user",
+        "tags": ["auth"],
+        "description": "Get authenticated user information",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current user info",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Current user info",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "User unique identifier"
+                        },
+                        "email": {
+                          "type": "string",
+                          "format": "email",
+                          "description": "User email address"
+                        },
+                        "firstName": {
+                          "type": "string",
+                          "nullable": true,
+                          "description": "User first name"
+                        },
+                        "lastName": {
+                          "type": "string",
+                          "nullable": true,
+                          "description": "User last name"
+                        },
+                        "role": {
+                          "type": "string",
+                          "enum": ["USER", "ADMIN"],
+                          "description": "User role"
+                        },
+                        "provider": {
+                          "type": "string",
+                          "enum": ["LOCAL", "GOOGLE"],
+                          "description": "Authentication provider"
+                        },
+                        "isEmailVerified": {
+                          "type": "boolean",
+                          "description": "Email verification status"
+                        },
+                        "isActive": {
+                          "type": "boolean",
+                          "description": "Account active status"
+                        },
+                        "avatarUrl": {
+                          "type": "string",
+                          "nullable": true,
+                          "description": "User avatar URL"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "description": "Account creation timestamp"
+                        },
+                        "lastLoginAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "nullable": true,
+                          "description": "Last login timestamp"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Unauthorized",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "description": "Error code"
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Error message"
+                        },
+                        "statusCode": {
+                          "type": "integer",
+                          "description": "HTTP status code"
+                        },
+                        "details": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "Additional error details"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Forbidden",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "description": "Error code"
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Error message"
+                        },
+                        "statusCode": {
+                          "type": "integer",
+                          "description": "HTTP status code"
+                        },
+                        "details": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "Additional error details"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/logout": {
+      "post": {
+        "summary": "Logout",
+        "tags": ["auth"],
+        "description": "Logout from current session",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Logged out successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Logged out successfully",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Unauthorized",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "description": "Error code"
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Error message"
+                        },
+                        "statusCode": {
+                          "type": "integer",
+                          "description": "HTTP status code"
+                        },
+                        "details": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "Additional error details"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/logout-all": {
+      "post": {
+        "summary": "Logout from all devices",
+        "tags": ["auth"],
+        "description": "Invalidate all sessions",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Logged out from all devices",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Logged out from all devices",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Unauthorized",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "description": "Error code"
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Error message"
+                        },
+                        "statusCode": {
+                          "type": "integer",
+                          "description": "HTTP status code"
+                        },
+                        "details": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "Additional error details"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/change-password": {
+      "post": {
+        "summary": "Change password",
+        "tags": ["auth"],
+        "description": "Change user password (requires current password)",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["currentPassword", "newPassword"],
+                "properties": {
+                  "currentPassword": {
+                    "type": "string",
+                    "description": "Current password for verification"
+                  },
+                  "newPassword": {
+                    "type": "string",
+                    "description": "New password (must meet strength requirements)"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Password changed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Password changed successfully",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Bad Request",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "description": "Error code"
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Error message"
+                        },
+                        "statusCode": {
+                          "type": "integer",
+                          "description": "HTTP status code"
+                        },
+                        "details": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "Additional error details"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Unauthorized",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "description": "Error code"
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Error message"
+                        },
+                        "statusCode": {
+                          "type": "integer",
+                          "description": "HTTP status code"
+                        },
+                        "details": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "Additional error details"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/sessions": {
+      "get": {
+        "summary": "Get sessions",
+        "tags": ["auth"],
+        "description": "Get all active sessions for current user",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of sessions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "List of sessions",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Session unique identifier"
+                          },
+                          "userId": {
+                            "type": "string",
+                            "description": "User ID associated with session"
+                          },
+                          "ipAddress": {
+                            "type": "string",
+                            "nullable": true,
+                            "description": "IP address of session"
+                          },
+                          "userAgent": {
+                            "type": "string",
+                            "nullable": true,
+                            "description": "User agent string"
+                          },
+                          "deviceInfo": {
+                            "type": "string",
+                            "nullable": true,
+                            "description": "Device information"
+                          },
+                          "loginProvider": {
+                            "type": "string",
+                            "enum": ["LOCAL", "GOOGLE"],
+                            "description": "Login provider"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "Session creation timestamp"
+                          },
+                          "expiresAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "Session expiration timestamp"
+                          },
+                          "lastActivityAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "Last activity timestamp"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Unauthorized",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "description": "Error code"
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Error message"
+                        },
+                        "statusCode": {
+                          "type": "integer",
+                          "description": "HTTP status code"
+                        },
+                        "details": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "Additional error details"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/sessions/{sessionId}": {
+      "delete": {
+        "summary": "Delete session",
+        "tags": ["auth"],
+        "description": "Delete a specific session",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "sessionId",
+            "required": true,
+            "description": "Session ID to delete"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Session deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Session deleted successfully",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Unauthorized",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "description": "Error code"
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Error message"
+                        },
+                        "statusCode": {
+                          "type": "integer",
+                          "description": "HTTP status code"
+                        },
+                        "details": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "Additional error details"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Not Found",
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "description": "Error code"
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Error message"
+                        },
+                        "statusCode": {
+                          "type": "integer",
+                          "description": "HTTP status code"
+                        },
+                        "details": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "Additional error details"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3005",
+      "description": "Development server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "root",
+      "description": "Root endpoints (no /api prefix)"
+    },
+    {
+      "name": "health",
+      "description": "Health check endpoints (/api/health)"
+    },
+    {
+      "name": "auth",
+      "description": "Authentication endpoints (/api/auth/*)"
+    },
+    {
+      "name": "instagram",
+      "description": "Instagram scraper endpoints (/api/instagram/*)"
+    },
+    {
+      "name": "webhook",
+      "description": "Meta webhook endpoints (/api/webhook)"
+    },
+    {
+      "name": "email",
+      "description": "Email management endpoints (/api/email/*)"
+    }
+  ]
+}

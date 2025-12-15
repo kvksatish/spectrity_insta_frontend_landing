@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { useEffect } from "react";
 import { BookDemoForm } from "@/components/BookDemoForm";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import type { HeroSection } from "@/types/landing-page";
 
 interface HeroProps {
@@ -15,18 +15,24 @@ export function Hero({ config }: HeroProps) {
   // Pause animations when page is not visible to save memory/CPU
   useEffect(() => {
     const handleVisibilityChange = () => {
-      const animations = document.querySelectorAll('.animate-pulse, .animate-float');
+      const animations = document.querySelectorAll(
+        ".animate-pulse, .animate-float",
+      );
       if (document.hidden) {
-        animations.forEach(el => (el as HTMLElement).style.animationPlayState = 'paused');
+        animations.forEach(
+          (el) => ((el as HTMLElement).style.animationPlayState = "paused"),
+        );
       } else {
-        animations.forEach(el => (el as HTMLElement).style.animationPlayState = 'running');
+        animations.forEach(
+          (el) => ((el as HTMLElement).style.animationPlayState = "running"),
+        );
       }
     };
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, []);
   return (
@@ -36,7 +42,10 @@ export function Hero({ config }: HeroProps) {
           {/* Left Side - Content */}
           <div className="flex flex-col space-y-6 text-left">
             {config.badge && (
-              <Badge variant="secondary" className="text-xs font-medium px-2.5 py-0.5 rounded-full border border-border/50 w-fit">
+              <Badge
+                variant="secondary"
+                className="text-xs font-medium px-2.5 py-0.5 rounded-full border border-border/50 w-fit"
+              >
                 {config.badge}
               </Badge>
             )}

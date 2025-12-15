@@ -1,6 +1,9 @@
 "use client";
 
-import { Moon, Sun } from "lucide-react";
+// @ts-expect-error - lucide icons don't have individual type exports
+import Moon from "lucide-react/dist/esm/icons/moon";
+// @ts-expect-error - lucide icons don't have individual type exports
+import Sun from "lucide-react/dist/esm/icons/sun";
 import { useTheme } from "./theme-provider";
 import { Button } from "./ui/button";
 

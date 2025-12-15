@@ -23,12 +23,7 @@ export function CTA({ config }: CTAProps) {
           </div>
           <div className="flex flex-col sm:flex-row gap-3">
             {config.buttons.map((button, index) => (
-              <Button
-                key={index}
-                asChild
-                variant={button.variant}
-                size="lg"
-              >
+              <Button key={index} asChild variant={button.variant} size="lg">
                 <Link href={button.href}>{button.label}</Link>
               </Button>
             ))}

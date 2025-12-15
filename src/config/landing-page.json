@@ -2,7 +2,13 @@
   "metadata": {
     "title": "Spectrity AI/ML Insights - Transform Your Data into Intelligence",
     "description": "Leading AI and ML solutions provider delivering cutting-edge insights for businesses worldwide",
-    "keywords": ["AI", "Machine Learning", "Data Analytics", "Business Intelligence", "Insights"]
+    "keywords": [
+      "AI",
+      "Machine Learning",
+      "Data Analytics",
+      "Business Intelligence",
+      "Insights"
+    ]
   },
   "navigation": {
     "logo": {
@@ -262,8 +268,16 @@
         }
       ],
       "socialLinks": [
-        { "platform": "Twitter", "href": "https://twitter.com", "icon": "twitter" },
-        { "platform": "LinkedIn", "href": "https://linkedin.com", "icon": "linkedin" },
+        {
+          "platform": "Twitter",
+          "href": "https://twitter.com",
+          "icon": "twitter"
+        },
+        {
+          "platform": "LinkedIn",
+          "href": "https://linkedin.com",
+          "icon": "linkedin"
+        },
         { "platform": "GitHub", "href": "https://github.com", "icon": "github" }
       ],
       "copyright": "© 2025 Spectrity Insights. All rights reserved."

@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { getLandingPageConfig } from "@/lib/config-loader";
 import { ThemeProvider } from "@/components/theme-provider";
+import { AuthProvider } from "@/context/AuthContext";
+import { getLandingPageConfig } from "@/lib/config-loader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,6 +21,26 @@ export const metadata: Metadata = {
   title: config.metadata.title,
   description: config.metadata.description,
   keywords: config.metadata.keywords,
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Spectrity",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  openGraph: {
+    type: "website",
+    siteName: "Spectrity AI/ML Insights",
+    title: config.metadata.title,
+    description: config.metadata.description,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: config.metadata.title,
+    description: config.metadata.description,
+  },
 };
 
 export default function RootLayout({
@@ -33,7 +54,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ThemeProvider defaultTheme="light">
-          {children}
+          <AuthProvider>{children}</AuthProvider>
         </ThemeProvider>
       </body>
     </html>

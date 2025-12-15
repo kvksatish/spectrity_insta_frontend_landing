@@ -1,14 +1,14 @@
 "use client";
 
 import type { Section } from "@/types/landing-page";
-import { Hero } from "./Hero";
+import { CTA } from "./CTA";
 import { DashboardPreview } from "./DashboardPreview";
+import { FAQ } from "./FAQ";
 import { Features } from "./Features";
+import { Footer } from "./Footer";
+import { Hero } from "./Hero";
 import { Pricing } from "./Pricing";
 import { Testimonials } from "./Testimonials";
-import { CTA } from "./CTA";
-import { FAQ } from "./FAQ";
-import { Footer } from "./Footer";
 
 interface LandingPageRendererProps {
   sections: Section[];

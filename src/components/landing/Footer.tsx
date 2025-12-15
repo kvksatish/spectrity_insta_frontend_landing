@@ -1,9 +1,14 @@
 "use client";
 
+// @ts-expect-error - lucide icons don't have individual type exports
+import Github from "lucide-react/dist/esm/icons/github";
+// @ts-expect-error - lucide icons don't have individual type exports
+import Linkedin from "lucide-react/dist/esm/icons/linkedin";
+// @ts-expect-error - lucide icons don't have individual type exports
+import Twitter from "lucide-react/dist/esm/icons/twitter";
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
 import type { FooterSection } from "@/types/landing-page";
-import { Github, Linkedin, Twitter } from "lucide-react";
 
 interface FooterProps {
   config: FooterSection;
@@ -22,7 +27,9 @@ export function Footer({ config }: FooterProps) {
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-6">
           <div className="lg:col-span-2">
             <Link href="/" className="flex items-center space-x-2 mb-4">
-              <span className="text-lg font-semibold tracking-tight">{config.logo.text}</span>
+              <span className="text-lg font-semibold tracking-tight">
+                {config.logo.text}
+              </span>
             </Link>
             <p className="text-sm text-muted-foreground/70 mb-6 leading-relaxed max-w-xs">
               {config.description}
@@ -50,7 +57,9 @@ export function Footer({ config }: FooterProps) {
           </div>
           {config.columns.map((column, index) => (
             <div key={index}>
-              <h3 className="font-semibold text-sm mb-4 tracking-tight">{column.title}</h3>
+              <h3 className="font-semibold text-sm mb-4 tracking-tight">
+                {column.title}
+              </h3>
               <ul className="space-y-3">
                 {column.links.map((link, linkIndex) => (
                   <li key={linkIndex}>

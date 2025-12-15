@@ -1,17 +1,21 @@
 "use client";
 
+import type { LucideIcon } from "lucide-react";
+// @ts-expect-error - lucide icons don't have individual type exports
+import Activity from "lucide-react/dist/esm/icons/activity";
+// @ts-expect-error - lucide icons don't have individual type exports
+import Brain from "lucide-react/dist/esm/icons/brain";
+// @ts-expect-error - lucide icons don't have individual type exports
+import Code from "lucide-react/dist/esm/icons/code";
+// @ts-expect-error - lucide icons don't have individual type exports
+import Shield from "lucide-react/dist/esm/icons/shield";
+// @ts-expect-error - lucide icons don't have individual type exports
+import Users from "lucide-react/dist/esm/icons/users";
+// @ts-expect-error - lucide icons don't have individual type exports
+import Zap from "lucide-react/dist/esm/icons/zap";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import type { FeaturesSection } from "@/types/landing-page";
-import {
-  Brain,
-  Activity,
-  Shield,
-  Zap,
-  Users,
-  Code,
-  type LucideIcon,
-} from "lucide-react";
 
 interface FeaturesProps {
   config: FeaturesSection;
@@ -32,7 +36,12 @@ export function Features({ config }: FeaturesProps) {
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex flex-col items-center text-center space-y-4 mb-16">
           {config.badge && (
-            <Badge variant="secondary" className="text-xs font-medium px-3 py-1 rounded-full border border-border/50">{config.badge}</Badge>
+            <Badge
+              variant="secondary"
+              className="text-xs font-medium px-3 py-1 rounded-full border border-border/50"
+            >
+              {config.badge}
+            </Badge>
           )}
           <h2 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl max-w-3xl">
             {config.heading}

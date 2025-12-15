@@ -17,7 +17,7 @@ type ThemeProviderState = {
 };
 
 const ThemeProviderContext = createContext<ThemeProviderState | undefined>(
-  undefined
+  undefined,
 );
 
 export function ThemeProvider({

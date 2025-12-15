@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Storage</title>
+    <style>
+        body { font-family: monospace; padding: 20px; background: #1e1e1e; color: #d4d4d4; }
+        button { padding: 10px 20px; margin: 5px; background: #0e639c; color: white; border: none; cursor: pointer; }
+        .success { color: #4ec9b0; }
+        .error { color: #f48771; }
+        pre { background: #252526; padding: 10px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Frontend Storage Test</h1>
+
+    <button onclick="testLocalStorage()">Test localStorage</button>
+    <button onclick="checkTokens()">Check Current Tokens</button>
+    <button onclick="simulateRefresh()">Simulate Page Refresh</button>
+    <button onclick="clearAll()">Clear All</button>
+
+    <div id="output"></div>
+
+    <script>
+        function log(msg, type = 'info') {
+            const output = document.getElementById('output');
+            const className = type === 'error' ? 'error' : 'success';
+            output.innerHTML += `<pre class="${className}">${msg}</pre>`;
+        }
+
+        function testLocalStorage() {
+            document.getElementById('output').innerHTML = '';
+
+            log('Testing localStorage...');
+
+            // Test write
+            try {
+                localStorage.setItem('test_key', 'test_value');
+                log('✓ localStorage.setItem works');
+            } catch (e) {
+                log(`✗ localStorage.setItem failed: ${e.message}`, 'error');
+                return;
+            }
+
+            // Test read
+            const value = localStorage.getItem('test_key');
+            if (value === 'test_value') {
+                log('✓ localStorage.getItem works');
+            } else {
+                log(`✗ localStorage.getItem failed: got ${value}`, 'error');
+            }
+
+            // Test remove
+            localStorage.removeItem('test_key');
+            const removed = localStorage.getItem('test_key');
+            if (removed === null) {
+                log('✓ localStorage.removeItem works');
+            } else {
+                log(`✗ localStorage.removeItem failed`, 'error');
+            }
+
+            log('\n✅ localStorage is working correctly!');
+        }
+
+        function checkTokens() {
+            document.getElementById('output').innerHTML = '';
+
+            log('Checking token storage...\n');
+
+            // Check refresh token
+            const rt = localStorage.getItem('rt');
+            if (rt) {
+                log(`✓ Refresh token EXISTS in localStorage`);
+                log(`  Length: ${rt.length} characters`);
+                log(`  First 50 chars: ${rt.substring(0, 50)}...`);
+            } else {
+                log('✗ NO refresh token in localStorage', 'error');
+                log('  User must login first!');
+            }
+
+            log('\nAll localStorage keys:');
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                log(`  ${key}: ${value?.substring(0, 50)}...`);
+            }
+        }
+
+        function simulateRefresh() {
+            document.getElementById('output').innerHTML = '';
+
+            log('Simulating page refresh...\n');
+
+            const rt = localStorage.getItem('rt');
+
+            if (!rt) {
+                log('✗ NO refresh token found!', 'error');
+                log('  After refresh, user will be logged out');
+                return;
+            }
+
+            log('✓ Refresh token found');
+            log('  After refresh, app should:');
+            log('  1. Read refresh token from localStorage');
+            log('  2. Call POST /api/v1/auth/refresh');
+            log('  3. Get new access token');
+            log('  4. Store new access token in memory');
+            log('  5. User stays logged in ✓');
+
+            log('\n💡 To test actual refresh:');
+            log('  1. Press F5 or Cmd+R to refresh page');
+            log('  2. Open Console (F12)');
+            log('  3. Look for [AUTH] logs');
+            log('  4. Should see "Initializing auth..." and "Tokens refreshed"');
+        }
+
+        function clearAll() {
+            localStorage.clear();
+            document.getElementById('output').innerHTML = '';
+            log('✅ All storage cleared', 'success');
+        }
+    </script>
+</body>
+</html>

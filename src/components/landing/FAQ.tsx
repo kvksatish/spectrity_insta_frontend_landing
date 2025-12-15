@@ -1,9 +1,10 @@
 "use client";
 
+// @ts-expect-error - lucide icons don't have individual type exports
+import ChevronDown from "lucide-react/dist/esm/icons/chevron-down";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import type { FAQSection } from "@/types/landing-page";
-import { ChevronDown } from "lucide-react";
 
 interface FAQProps {
   config: FAQSection;
@@ -21,7 +22,10 @@ export function FAQ({ config }: FAQProps) {
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex flex-col items-center text-center space-y-4 mb-16">
           {config.badge && (
-            <Badge variant="secondary" className="text-xs font-medium px-3 py-1 rounded-full border border-border/50">
+            <Badge
+              variant="secondary"
+              className="text-xs font-medium px-3 py-1 rounded-full border border-border/50"
+            >
               {config.badge}
             </Badge>
           )}
@@ -50,14 +54,16 @@ export function FAQ({ config }: FAQProps) {
                 </span>
                 <ChevronDown
                   className={`w-5 h-5 text-muted-foreground shrink-0 transition-transform duration-300 ${
-                    openIndex === index ? 'rotate-180' : ''
+                    openIndex === index ? "rotate-180" : ""
                   }`}
                 />
               </button>
 
               <div
                 className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                  openIndex === index ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                  openIndex === index
+                    ? "max-h-96 opacity-100"
+                    : "max-h-0 opacity-0"
                 }`}
               >
                 <div className="px-6 pb-5 pt-0">

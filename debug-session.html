@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Session Debug Tool</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #1e1e1e;
+            color: #d4d4d4;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #252526;
+            border: 1px solid #3e3e42;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            background: #0e639c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover { background: #1177bb; }
+        .success { color: #4ec9b0; }
+        .error { color: #f48771; }
+        .warning { color: #dcdcaa; }
+        pre {
+            background: #1e1e1e;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        input {
+            padding: 8px;
+            margin: 5px;
+            background: #3c3c3c;
+            color: #d4d4d4;
+            border: 1px solid #3e3e42;
+            border-radius: 4px;
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Session Debug Tool</h1>
+
+    <div class="section">
+        <h2>1. Check Current Session</h2>
+        <button onclick="checkSession()">Check Session</button>
+        <div id="sessionInfo"></div>
+    </div>
+
+    <div class="section">
+        <h2>2. Test Login</h2>
+        <input type="email" id="email" placeholder="Email" value="kvksatish98.starlink@gmail.com">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="testLogin()">Login</button>
+        <div id="loginResult"></div>
+    </div>
+
+    <div class="section">
+        <h2>3. Test Refresh Token</h2>
+        <button onclick="testRefresh()">Refresh Token</button>
+        <div id="refreshResult"></div>
+    </div>
+
+    <div class="section">
+        <h2>4. Test Get Current User</h2>
+        <button onclick="testGetMe()">Get Current User</button>
+        <div id="meResult"></div>
+    </div>
+
+    <div class="section">
+        <h2>5. Clear Session</h2>
+        <button onclick="clearSession()">Clear All Tokens</button>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3005/api/v1';
+
+        function log(elementId, message, type = 'info') {
+            const el = document.getElementById(elementId);
+            const className = type === 'error' ? 'error' : type === 'success' ? 'success' : 'warning';
+            el.innerHTML = `<pre class="${className}">${message}</pre>`;
+        }
+
+        function checkSession() {
+            const rt = localStorage.getItem('rt');
+            const at = window.accessToken || 'Not set (in memory)';
+
+            let html = '<pre class="success">';
+            html += 'Refresh Token (localStorage): ' + (rt ? '✓ EXISTS\n' + rt.substring(0, 50) + '...' : '✗ NOT FOUND') + '\n';
+            html += 'Access Token (memory): ' + at;
+            html += '</pre>';
+
+            document.getElementById('sessionInfo').innerHTML = html;
+        }
+
+        async function testLogin() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            log('loginResult', 'Logging in...', 'warning');
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password, rememberMe: true })
+                });
+
+                const data = await response.json();
+
+                let result = `Status: ${response.status}\n\n`;
+                result += `Response:\n${JSON.stringify(data, null, 2)}\n\n`;
+
+                if (response.ok) {
+                    // Check format
+                    const tokenData = data.data;
+                    if (tokenData.access_token) {
+                        result += '⚠️  Backend returns snake_case (access_token)\n';
+                        localStorage.setItem('rt', tokenData.refresh_token);
+                        window.accessToken = tokenData.access_token;
+                    } else if (tokenData.accessToken) {
+                        result += '✓ Backend returns camelCase (accessToken)\n';
+                        localStorage.setItem('rt', tokenData.refreshToken);
+                        window.accessToken = tokenData.accessToken;
+                    }
+                    log('loginResult', result, 'success');
+                } else {
+                    log('loginResult', result, 'error');
+                }
+            } catch (err) {
+                log('loginResult', `Error: ${err.message}`, 'error');
+            }
+        }
+
+        async function testRefresh() {
+            const refreshToken = localStorage.getItem('rt');
+
+            if (!refreshToken) {
+                log('refreshResult', '❌ No refresh token found. Login first!', 'error');
+                return;
+            }
+
+            log('refreshResult', 'Refreshing token...', 'warning');
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/refresh`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ refreshToken })
+                });
+
+                const data = await response.json();
+
+                let result = `Status: ${response.status}\n\n`;
+                result += `Request:\n${JSON.stringify({ refreshToken: refreshToken.substring(0, 50) + '...' }, null, 2)}\n\n`;
+                result += `Response:\n${JSON.stringify(data, null, 2)}\n\n`;
+
+                if (response.ok) {
+                    const tokenData = data.data;
+
+                    // Check format
+                    if (tokenData.access_token) {
+                        result += '⚠️  Backend returns snake_case (access_token, refresh_token)\n';
+                        result += 'Frontend expects camelCase (accessToken, refreshToken)\n';
+                        result += '❌ THIS IS WHY SESSIONS ARE EXPIRING!\n\n';
+
+                        // Store anyway for testing
+                        localStorage.setItem('rt', tokenData.refresh_token);
+                        window.accessToken = tokenData.access_token;
+                    } else if (tokenData.accessToken) {
+                        result += '✓ Backend returns camelCase (correct)\n';
+                        localStorage.setItem('rt', tokenData.refreshToken);
+                        window.accessToken = tokenData.accessToken;
+                    } else {
+                        result += '❌ Unknown response format!\n';
+                    }
+
+                    log('refreshResult', result, tokenData.access_token ? 'warning' : 'success');
+                } else {
+                    log('refreshResult', result, 'error');
+                }
+            } catch (err) {
+                log('refreshResult', `Error: ${err.message}`, 'error');
+            }
+        }
+
+        async function testGetMe() {
+            const at = window.accessToken;
+
+            if (!at || at === 'Not set (in memory)') {
+                log('meResult', '❌ No access token found. Login first!', 'error');
+                return;
+            }
+
+            log('meResult', 'Fetching user...', 'warning');
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/me`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${at}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                let result = `Status: ${response.status}\n\n`;
+                result += `Response:\n${JSON.stringify(data, null, 2)}\n\n`;
+
+                if (response.ok && data.data) {
+                    const userData = data.data;
+
+                    // Check format
+                    if (userData.first_name) {
+                        result += '⚠️  Backend returns snake_case (first_name, is_email_verified)\n';
+                    } else if (userData.firstName) {
+                        result += '✓ Backend returns camelCase\n';
+                    }
+
+                    log('meResult', result, 'success');
+                } else {
+                    log('meResult', result, 'error');
+                }
+            } catch (err) {
+                log('meResult', `Error: ${err.message}`, 'error');
+            }
+        }
+
+        function clearSession() {
+            localStorage.removeItem('rt');
+            window.accessToken = null;
+            alert('✓ Session cleared!');
+            checkSession();
+        }
+
+        // Auto-check on load
+        checkSession();
+    </script>
+</body>
+</html>

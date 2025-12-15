@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>localStorage Test</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #1e1e1e;
+            color: #d4d4d4;
+        }
+        .test {
+            background: #252526;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #0e639c;
+            border-radius: 4px;
+        }
+        .success { border-color: #4ec9b0; color: #4ec9b0; }
+        .error { border-color: #f48771; color: #f48771; }
+        button {
+            background: #0e639c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #1177bb; }
+        pre {
+            background: #1e1e1e;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 localStorage & Session Test</h1>
+    <p>This tests if localStorage is working in your browser</p>
+
+    <div id="results"></div>
+
+    <h2>Manual Tests</h2>
+    <button onclick="testWrite()">Test Write</button>
+    <button onclick="testRead()">Test Read</button>
+    <button onclick="clearTest()">Clear Test Data</button>
+    <button onclick="checkExisting()">Check Existing Tokens</button>
+
+    <script>
+        const results = document.getElementById('results');
+
+        function addResult(title, success, details) {
+            const div = document.createElement('div');
+            div.className = `test ${success ? 'success' : 'error'}`;
+            div.innerHTML = `
+                <strong>${success ? '✓' : '✗'} ${title}</strong>
+                <pre>${details}</pre>
+            `;
+            results.appendChild(div);
+        }
+
+        // Auto-run tests on load
+        window.onload = function() {
+            runAllTests();
+        };
+
+        function runAllTests() {
+            results.innerHTML = '';
+            addResult('Test 1', true, 'Starting automated tests...');
+
+            // Test 1: localStorage available
+            try {
+                const available = typeof localStorage !== 'undefined';
+                addResult(
+                    'localStorage Available',
+                    available,
+                    available ? 'localStorage is available' : 'localStorage is NOT available'
+                );
+
+                if (!available) {
+                    addResult('ERROR', false, 'Cannot proceed - localStorage not available. Check browser settings.');
+                    return;
+                }
+            } catch (e) {
+                addResult('localStorage Check Failed', false, e.message);
+                return;
+            }
+
+            // Test 2: Write permission
+            try {
+                localStorage.setItem('test_key', 'test_value');
+                addResult('Write Test', true, 'Successfully wrote to localStorage');
+            } catch (e) {
+                addResult('Write Test Failed', false,
+                    `Error: ${e.message}\n\nPossible causes:\n- Private/Incognito mode\n- Storage quota exceeded\n- Browser security settings`
+                );
+                return;
+            }
+
+            // Test 3: Read permission
+            try {
+                const value = localStorage.getItem('test_key');
+                const success = value === 'test_value';
+                addResult('Read Test', success,
+                    success ? `Read value: "${value}"` : `Expected "test_value", got "${value}"`
+                );
+            } catch (e) {
+                addResult('Read Test Failed', false, e.message);
+            }
+
+            // Test 4: Delete permission
+            try {
+                localStorage.removeItem('test_key');
+                const value = localStorage.getItem('test_key');
+                const success = value === null;
+                addResult('Delete Test', success,
+                    success ? 'Successfully deleted item' : 'Failed to delete item'
+                );
+            } catch (e) {
+                addResult('Delete Test Failed', false, e.message);
+            }
+
+            // Test 5: Check for existing auth tokens
+            try {
+                const rt = localStorage.getItem('rt');
+                const at = localStorage.getItem('at');
+                const allKeys = Object.keys(localStorage);
+
+                addResult('Existing Tokens Check', true,
+                    `Refresh Token (rt): ${rt ? `EXISTS (${rt.length} chars)` : 'NOT FOUND'}\n` +
+                    `Access Token (at): ${at ? `EXISTS (${at.length} chars)` : 'NOT FOUND'}\n` +
+                    `Total localStorage items: ${allKeys.length}\n` +
+                    `Keys: ${allKeys.join(', ') || 'none'}`
+                );
+            } catch (e) {
+                addResult('Token Check Failed', false, e.message);
+            }
+
+            // Test 6: Storage capacity
+            try {
+                const testData = 'x'.repeat(1000); // 1KB
+                localStorage.setItem('capacity_test', testData);
+                localStorage.removeItem('capacity_test');
+                addResult('Storage Capacity Test', true, 'Can store at least 1KB of data');
+            } catch (e) {
+                addResult('Storage Capacity Test Failed', false,
+                    `Cannot store data. Error: ${e.message}`
+                );
+            }
+
+            // Test 7: JSON storage (what tokenStorage uses)
+            try {
+                const testObj = { token: 'test123', expires: Date.now() };
+                localStorage.setItem('json_test', JSON.stringify(testObj));
+                const retrieved = JSON.parse(localStorage.getItem('json_test'));
+                const success = retrieved.token === 'test123';
+                localStorage.removeItem('json_test');
+
+                addResult('JSON Storage Test', success,
+                    success ? 'Can store and retrieve JSON objects' : 'Failed to store/retrieve JSON'
+                );
+            } catch (e) {
+                addResult('JSON Storage Test Failed', false, e.message);
+            }
+
+            addResult('Tests Complete', true, 'All automated tests finished');
+        }
+
+        function testWrite() {
+            try {
+                const testToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test';
+                localStorage.setItem('rt', testToken);
+                addResult('Manual Write Test', true,
+                    `Wrote test refresh token\nValue: ${testToken}`
+                );
+
+                // Verify
+                const stored = localStorage.getItem('rt');
+                addResult('Verification', stored === testToken,
+                    stored === testToken ? 'Token verified in storage' : 'Token NOT in storage!'
+                );
+            } catch (e) {
+                addResult('Write Failed', false, e.message);
+            }
+        }
+
+        function testRead() {
+            try {
+                const value = localStorage.getItem('rt');
+                addResult('Manual Read Test', !!value,
+                    value ? `Found token: ${value.substring(0, 50)}...` : 'No token found'
+                );
+            } catch (e) {
+                addResult('Read Failed', false, e.message);
+            }
+        }
+
+        function clearTest() {
+            try {
+                localStorage.removeItem('rt');
+                localStorage.removeItem('at');
+                localStorage.removeItem('test_key');
+                addResult('Clear Test', true, 'Cleared test tokens from localStorage');
+            } catch (e) {
+                addResult('Clear Failed', false, e.message);
+            }
+        }
+
+        function checkExisting() {
+            try {
+                const allKeys = Object.keys(localStorage);
+                const items = allKeys.map(key => {
+                    const value = localStorage.getItem(key);
+                    return `${key}: ${value ? value.substring(0, 50) + '...' : 'null'}`;
+                }).join('\n');
+
+                addResult('Existing Storage', true,
+                    `Total items: ${allKeys.length}\n\n${items || 'localStorage is empty'}`
+                );
+            } catch (e) {
+                addResult('Check Failed', false, e.message);
+            }
+        }
+    </script>
+</body>
+</html>
