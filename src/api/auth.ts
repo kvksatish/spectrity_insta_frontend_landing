@@ -247,7 +247,7 @@ export const authApi = {
 
   /**
    * Initialize authentication on app load
-   * Uses refresh token to get new access token and user data
+   * Simply tries to fetch user data - if token is expired, the interceptor handles refresh automatically
    */
   initializeAuth: async (): Promise<User | null> => {
     console.log("[AUTH] 🚀 Initializing auth...");
@@ -259,22 +259,22 @@ export const authApi = {
       return null;
     }
 
-    console.log("[AUTH] Refresh token found, attempting to restore session...");
+    console.log("[AUTH] Tokens found, fetching user data...");
 
     try {
-      // Refresh access token
-      const tokenData = await authApi.refreshToken(refreshToken);
-      tokenStorage.setTokens(tokenData.accessToken, tokenData.refreshToken);
-      console.log("[AUTH] ✅ Tokens refreshed successfully");
-
-      // Get current user
+      // Simply fetch user data
+      // If access token is expired, the axios interceptor will automatically:
+      // 1. Catch the 401 error
+      // 2. Call /v1/auth/refresh
+      // 3. Store new tokens
+      // 4. Retry this request
       const user = await authApi.getCurrentUser();
       console.log("[AUTH] ✅ User data fetched:", user.email);
       return user;
     } catch (error: any) {
-      // Refresh failed, clear tokens
+      // If this fails, it means even the refresh token is invalid
+      // The interceptor already cleared tokens and redirected to login
       console.error("[AUTH] ❌ Session restore failed:", error.message);
-      tokenStorage.clearTokens();
       return null;
     }
   },

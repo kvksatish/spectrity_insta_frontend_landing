@@ -1,7 +1,11 @@
 #!/bin/bash
 
-# Build and Push Docker Image Script with Versioning
-# Usage: ./build-and-push.sh [version]
+# Build and Push Docker Image Script with Auto-Versioning
+# Usage:
+#   ./build-and-push.sh              # Auto-increment patch version (0.5.4 -> 0.5.5)
+#   ./build-and-push.sh minor        # Increment minor version (0.5.4 -> 0.6.0)
+#   ./build-and-push.sh major        # Increment major version (0.5.4 -> 1.0.0)
+#   ./build-and-push.sh 1.2.3        # Use specific version
 
 set -e
 
@@ -14,6 +18,7 @@ PLATFORM="linux/amd64"
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Function to print colored output
@@ -29,18 +34,70 @@ print_warning() {
     echo -e "${YELLOW}[WARNING]${NC} $1"
 }
 
-# Get version from argument or generate from package.json
+print_version() {
+    echo -e "${BLUE}[VERSION]${NC} $1"
+}
+
+# Check if package.json exists
+if [ ! -f "package.json" ]; then
+    print_error "package.json not found!"
+    exit 1
+fi
+
+# Get current version
+CURRENT_VERSION=$(node -p "require('./package.json').version")
+print_version "Current version: $CURRENT_VERSION"
+
+# Determine version bump type or use specific version
 if [ -n "$1" ]; then
-    VERSION="$1"
+    case "$1" in
+        major|minor|patch)
+            # Auto-increment using npm version
+            print_info "Incrementing $1 version..."
+            npm version "$1" --no-git-tag-version
+            VERSION=$(node -p "require('./package.json').version")
+            print_version "New version: $VERSION"
+
+            # Commit version bump
+            print_info "Committing version bump..."
+            git add package.json package-lock.json
+            git commit -m "chore: bump version to $VERSION" || print_warning "Nothing to commit"
+            ;;
+        [0-9]*)
+            # Specific version provided
+            VERSION="$1"
+            print_info "Using specified version: $VERSION"
+
+            # Update package.json with specific version
+            npm version "$VERSION" --no-git-tag-version
+
+            # Commit version change
+            print_info "Committing version change..."
+            git add package.json package-lock.json
+            git commit -m "chore: set version to $VERSION" || print_warning "Nothing to commit"
+            ;;
+        *)
+            print_error "Invalid argument: $1"
+            print_info "Usage:"
+            print_info "  ./build-and-push.sh              # Auto-increment patch"
+            print_info "  ./build-and-push.sh patch        # Increment patch (0.5.4 -> 0.5.5)"
+            print_info "  ./build-and-push.sh minor        # Increment minor (0.5.4 -> 0.6.0)"
+            print_info "  ./build-and-push.sh major        # Increment major (0.5.4 -> 1.0.0)"
+            print_info "  ./build-and-push.sh 1.2.3        # Use specific version"
+            exit 1
+            ;;
+    esac
 else
-    # Extract version from package.json
-    if [ -f "package.json" ]; then
-        VERSION=$(node -p "require('./package.json').version")
-        print_info "Using version from package.json: $VERSION"
-    else
-        print_error "package.json not found and no version specified"
-        exit 1
-    fi
+    # Default: auto-increment patch version
+    print_info "Auto-incrementing patch version..."
+    npm version patch --no-git-tag-version
+    VERSION=$(node -p "require('./package.json').version")
+    print_version "New version: $VERSION"
+
+    # Commit version bump
+    print_info "Committing version bump..."
+    git add package.json package-lock.json
+    git commit -m "chore: bump version to $VERSION" || print_warning "Nothing to commit"
 fi
 
 # Generate build timestamp

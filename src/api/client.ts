@@ -139,25 +139,37 @@ client.interceptors.response.use(
       originalRequest.headers.Authorization = `Bearer ${accessToken}`;
       return client(originalRequest);
     } catch (refreshError: any) {
-      // Refresh failed - clear tokens and redirect to login
+      // Refresh failed
       console.error("[AUTH] ❌ Token refresh failed:", refreshError.message);
       console.error("[AUTH] Error details:", refreshError.response?.data || refreshError);
 
       processQueue(refreshError as Error, null);
-      tokenStorage.clearTokens();
 
-      // Only redirect if we're in the browser
-      if (typeof window !== "undefined") {
-        const currentPath = window.location.pathname;
-        const isAuthPage = ["/login", "/register", "/forgot-password"].includes(
-          currentPath,
-        );
+      // ONLY clear tokens if the refresh token itself is expired/invalid (401 from refresh endpoint)
+      // Don't clear on network errors or other issues - let the user retry
+      const isRefreshTokenExpired = refreshError.response?.status === 401 ||
+                                     refreshError.response?.status === 403;
 
-        // Don't redirect if already on auth page
-        if (!isAuthPage) {
-          console.log("[AUTH] Redirecting to login (session expired)");
-          window.location.href = "/login?session=expired";
+      if (isRefreshTokenExpired) {
+        console.error("[AUTH] 🔴 Refresh token is expired/invalid - clearing tokens");
+        tokenStorage.clearTokens();
+
+        // Only redirect if we're in the browser
+        if (typeof window !== "undefined") {
+          const currentPath = window.location.pathname;
+          const isAuthPage = ["/login", "/register", "/forgot-password"].includes(
+            currentPath,
+          );
+
+          // Don't redirect if already on auth page
+          if (!isAuthPage) {
+            console.log("[AUTH] Redirecting to login (session expired)");
+            window.location.href = "/login?session=expired";
+          }
         }
+      } else {
+        // Network error or other issue - keep tokens, just fail the request
+        console.warn("[AUTH] ⚠️ Token refresh failed due to network/server error - keeping tokens");
       }
 
       return Promise.reject(refreshError);
