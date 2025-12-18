@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extract Dev Tokens</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #333;
+            margin-top: 0;
+        }
+        .info {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .warning {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .success {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-right: 10px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .token-box {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            word-break: break-all;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .token-label {
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 8px;
+        }
+        .copy-btn {
+            background: #4caf50;
+            font-size: 14px;
+            padding: 8px 16px;
+        }
+        .copy-btn:hover {
+            background: #45a049;
+        }
+        .result {
+            display: none;
+            margin-top: 20px;
+        }
+        .step {
+            margin: 15px 0;
+            padding: 15px;
+            background: #fafafa;
+            border-radius: 6px;
+        }
+        .step-number {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            width: 28px;
+            height: 28px;
+            line-height: 28px;
+            text-align: center;
+            border-radius: 50%;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔑 Extract Development Tokens</h1>
+
+        <div class="info">
+            <strong>Purpose:</strong> This tool extracts your authentication tokens from localStorage
+            and formats them for use in your <code>.env</code> file for local development testing.
+        </div>
+
+        <div class="warning">
+            <strong>⚠️ Security Warning:</strong><br>
+            • These tokens grant full access to your account<br>
+            • NEVER commit real tokens to git<br>
+            • Only use in local development environment<br>
+            • Tokens expire after some time (check your backend settings)
+        </div>
+
+        <div class="step">
+            <span class="step-number">1</span>
+            <strong>Login to your app first</strong><br>
+            Open your app in another tab and login with your credentials
+        </div>
+
+        <div class="step">
+            <span class="step-number">2</span>
+            <strong>Extract tokens</strong><br>
+            Come back to this page and click the button below
+        </div>
+
+        <button onclick="extractTokens()">Extract Tokens from localStorage</button>
+
+        <div id="result" class="result">
+            <div class="success">
+                <strong>✅ Tokens extracted successfully!</strong>
+            </div>
+
+            <div>
+                <div class="token-label">Access Token (AT):</div>
+                <div class="token-box" id="accessToken"></div>
+                <button class="copy-btn" onclick="copyToken('accessToken')">Copy Access Token</button>
+            </div>
+
+            <div>
+                <div class="token-label">Refresh Token (RT):</div>
+                <div class="token-box" id="refreshToken"></div>
+                <button class="copy-btn" onclick="copyToken('refreshToken')">Copy Refresh Token</button>
+            </div>
+
+            <div class="step">
+                <span class="step-number">3</span>
+                <strong>Update your .env file</strong><br>
+                <ol>
+                    <li>Open <code>.env</code> in your project root</li>
+                    <li>Find these lines (near the bottom):
+                        <pre style="background:#f5f5f5;padding:10px;margin:10px 0;border-radius:4px;">
+# NEXT_PUBLIC_DEV_ACCESS_TOKEN=your_access_token_here
+# NEXT_PUBLIC_DEV_REFRESH_TOKEN=your_refresh_token_here</pre>
+                    </li>
+                    <li>Uncomment them (remove the #)</li>
+                    <li>Paste the tokens you copied above</li>
+                    <li>Save the file</li>
+                </ol>
+            </div>
+
+            <div class="step">
+                <span class="step-number">4</span>
+                <strong>Restart your dev server</strong><br>
+                Stop and restart <code>npm run dev</code> for changes to take effect
+            </div>
+
+            <div class="info">
+                <strong>✨ Done!</strong> Your app will now use these tokens automatically in development mode.
+                No need to login every time you refresh the page.
+            </div>
+
+            <div>
+                <button onclick="copyEnvFormat()">📋 Copy Complete .env Format</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function extractTokens() {
+            const at = localStorage.getItem('at');
+            const rt = localStorage.getItem('rt');
+
+            if (!at || !rt) {
+                alert('⚠️ Tokens not found!\n\nPlease login to your app first, then come back to this page.');
+                return;
+            }
+
+            // Display tokens
+            document.getElementById('accessToken').textContent = at;
+            document.getElementById('refreshToken').textContent = rt;
+            document.getElementById('result').style.display = 'block';
+
+            // Scroll to result
+            document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function copyToken(tokenId) {
+            const tokenElement = document.getElementById(tokenId);
+            const token = tokenElement.textContent;
+
+            navigator.clipboard.writeText(token).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✓ Copied!';
+                btn.style.background = '#45a049';
+
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '#4caf50';
+                }, 2000);
+            }).catch(err => {
+                alert('Failed to copy: ' + err);
+            });
+        }
+
+        function copyEnvFormat() {
+            const at = document.getElementById('accessToken').textContent;
+            const rt = document.getElementById('refreshToken').textContent;
+
+            const envText = `NEXT_PUBLIC_DEV_ACCESS_TOKEN=${at}
+NEXT_PUBLIC_DEV_REFRESH_TOKEN=${rt}`;
+
+            navigator.clipboard.writeText(envText).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✓ Copied to Clipboard!';
+                btn.style.background = '#45a049';
+
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '#667eea';
+                }, 3000);
+
+                alert('✅ Copied!\n\nNow paste this into your .env file (uncomment the lines first)');
+            }).catch(err => {
+                alert('Failed to copy: ' + err);
+            });
+        }
+
+        // Auto-extract if tokens exist
+        window.onload = function() {
+            const at = localStorage.getItem('at');
+            const rt = localStorage.getItem('rt');
+
+            if (at && rt) {
+                console.log('Tokens found in localStorage');
+            }
+        };
+    </script>
+</body>
+</html>
