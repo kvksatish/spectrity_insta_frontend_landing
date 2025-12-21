@@ -1,18 +1,18 @@
 {
   "metadata": {
-    "title": "Spectrity AI/ML Insights - Transform Your Data into Intelligence",
-    "description": "Leading AI and ML solutions provider delivering cutting-edge insights for businesses worldwide",
+    "title": "Spectrity - Transform Your Data into Intelligence",
+    "description": "Leading AI and ML solutions provider delivering cutting-edge technology for businesses worldwide",
     "keywords": [
       "AI",
       "Machine Learning",
       "Data Analytics",
       "Business Intelligence",
-      "Insights"
+      "Spectrity"
     ]
   },
   "navigation": {
     "logo": {
-      "text": "Spectrity Insights"
+      "text": "Spectrity"
     },
     "items": [
       { "label": "Features", "href": "#features" },
@@ -149,13 +149,13 @@
       "type": "testimonials",
       "badge": "Testimonials",
       "heading": "Loved by teams worldwide",
-      "description": "See what our customers have to say about Spectrity Insights",
+      "description": "See what our customers have to say about Spectrity",
       "testimonials": [
         {
           "name": "Sarah Johnson",
           "role": "CTO",
           "company": "TechCorp Inc.",
-          "content": "Spectrity Insights has transformed how we analyze our data. The AI models are incredibly accurate and the insights have directly contributed to a 40% increase in revenue.",
+          "content": "Spectrity has transformed how we analyze our data. The AI models are incredibly accurate and the insights have directly contributed to a 40% increase in revenue.",
           "rating": 5
         },
         {
@@ -178,11 +178,11 @@
       "type": "faq",
       "badge": "FAQ",
       "heading": "Frequently Asked Questions",
-      "description": "Everything you need to know about Spectrity Insights",
+      "description": "Everything you need to know about Spectrity",
       "faqs": [
         {
-          "question": "What is Spectrity AI/ML Insights?",
-          "answer": "Spectrity Insights is a comprehensive AI and machine learning platform that helps businesses transform their data into actionable intelligence. We provide state-of-the-art models, real-time analytics, and enterprise-grade security to help you make better data-driven decisions."
+          "question": "What is Spectrity?",
+          "answer": "Spectrity is a comprehensive AI and machine learning platform that helps businesses transform their data into actionable intelligence. We provide state-of-the-art models, real-time analytics, and enterprise-grade security to help you make better data-driven decisions."
         },
         {
           "question": "How does the pricing work?",
@@ -193,7 +193,7 @@
           "answer": "Absolutely. We implement bank-grade encryption and enterprise security measures to protect your sensitive data. All data is encrypted both in transit and at rest, and we comply with industry-standard security certifications including SOC 2 and ISO 27001."
         },
         {
-          "question": "Can I try Spectrity Insights before purchasing?",
+          "question": "Can I try Spectrity before purchasing?",
           "answer": "Yes! We offer a free trial on all our plans so you can experience the full power of our platform before making a commitment. No credit card required to start your trial."
         },
         {
@@ -209,7 +209,7 @@
     {
       "type": "cta",
       "heading": "Ready to get started?",
-      "description": "Join thousands of companies using Spectrity Insights to make better data-driven decisions",
+      "description": "Join thousands of companies using Spectrity to make better data-driven decisions",
       "buttons": [
         {
           "label": "Start Free Trial",
@@ -226,7 +226,7 @@
     {
       "type": "footer",
       "logo": {
-        "text": "Spectrity Insights"
+        "text": "Spectrity"
       },
       "description": "Advanced AI and ML solutions for modern businesses. Transform your data into actionable intelligence.",
       "columns": [
@@ -280,7 +280,7 @@
         },
         { "platform": "GitHub", "href": "https://github.com", "icon": "github" }
       ],
-      "copyright": "© 2025 Spectrity Insights. All rights reserved."
+      "copyright": "© 2025 Spectrity. All rights reserved."
     }
   ]
 }

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/context/AuthContext";
+import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
 import { getLandingPageConfig } from "@/lib/config-loader";
 
 const geistSans = Geist({
@@ -32,7 +33,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    siteName: "Spectrity AI/ML Insights",
+    siteName: "Spectrity",
     title: config.metadata.title,
     description: config.metadata.description,
   },
@@ -54,7 +55,10 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ThemeProvider defaultTheme="light">
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            {children}
+            <PWAInstallPrompt />
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

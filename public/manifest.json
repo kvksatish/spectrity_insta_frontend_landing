@@ -1,7 +1,7 @@
 {
-  "name": "Spectrity AI/ML Insights",
+  "name": "Spectrity",
   "short_name": "Spectrity",
-  "description": "Leading AI and ML solutions provider delivering cutting-edge insights for businesses worldwide",
+  "description": "Leading AI and ML solutions provider delivering cutting-edge technology for businesses worldwide",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
