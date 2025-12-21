@@ -21,9 +21,9 @@ interface PricingProps {
 
 export function Pricing({ config }: PricingProps) {
   return (
-    <section className="py-12 md:py-16 lg:py-20">
+    <section className="py-16 md:py-20 lg:py-24">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="flex flex-col items-center text-center space-y-4 mb-16">
+        <div className="flex flex-col items-center text-center space-y-4 mb-12 md:mb-16">
           {config.badge && (
             <Badge
               variant="secondary"
@@ -32,54 +32,61 @@ export function Pricing({ config }: PricingProps) {
               {config.badge}
             </Badge>
           )}
-          <h2 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl max-w-3xl">
+          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl max-w-3xl">
             {config.heading}
           </h2>
-          <p className="max-w-2xl text-base text-muted-foreground/80 md:text-lg">
+          <p className="max-w-2xl text-sm text-muted-foreground/80 sm:text-base md:text-lg">
             {config.description}
           </p>
         </div>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
+        <div className="grid gap-6 md:gap-8 md:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
           {config.plans.map((plan, index) => (
             <Card
               key={index}
               className={
                 plan.highlighted
-                  ? "border-primary/50 border-2 shadow-md bg-background/50 backdrop-blur"
+                  ? "border-primary/50 border-2 shadow-lg bg-background/50 backdrop-blur relative"
                   : "border border-border/40 shadow-sm bg-background/50 backdrop-blur"
               }
             >
-              <CardHeader className="pb-8 pt-8">
-                <CardTitle className="text-xl font-semibold">
+              {plan.highlighted && (
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                  <Badge className="bg-primary text-primary-foreground px-3 py-1 text-xs font-medium">
+                    Most Popular
+                  </Badge>
+                </div>
+              )}
+              <CardHeader className="pb-6 pt-8 md:pb-8">
+                <CardTitle className="text-lg sm:text-xl font-semibold">
                   {plan.name}
                 </CardTitle>
-                <CardDescription className="text-sm text-muted-foreground/70">
+                <CardDescription className="text-xs sm:text-sm text-muted-foreground/70">
                   {plan.description}
                 </CardDescription>
-                <div className="mt-6">
-                  <span className="text-5xl font-bold tracking-tight">
+                <div className="mt-4 sm:mt-6">
+                  <span className="text-4xl sm:text-5xl font-bold tracking-tight">
                     {plan.price}
                   </span>
                   {plan.period && (
-                    <span className="text-muted-foreground/60 ml-2 text-sm">
+                    <span className="text-muted-foreground/60 ml-2 text-xs sm:text-sm">
                       / {plan.period}
                     </span>
                   )}
                 </div>
               </CardHeader>
-              <CardContent className="pb-8">
-                <ul className="space-y-3">
+              <CardContent className="pb-6 md:pb-8">
+                <ul className="space-y-2.5 sm:space-y-3">
                   {plan.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-start gap-3">
-                      <Check className="w-4 h-4 text-primary shrink-0 mt-1" />
-                      <span className="text-sm text-foreground/80">
+                    <li key={featureIndex} className="flex items-start gap-2.5 sm:gap-3">
+                      <Check className="w-4 h-4 text-primary shrink-0 mt-0.5 sm:mt-1" />
+                      <span className="text-xs sm:text-sm text-foreground/80 leading-snug">
                         {feature}
                       </span>
                     </li>
                   ))}
                 </ul>
               </CardContent>
-              <CardFooter className="pb-8">
+              <CardFooter className="pb-6 md:pb-8">
                 <Button
                   asChild
                   variant={plan.highlighted ? "default" : "outline"}

@@ -18,9 +18,9 @@ export function FAQ({ config }: FAQProps) {
   };
 
   return (
-    <section className="py-12 md:py-16 lg:py-20">
+    <section className="py-16 md:py-20 lg:py-24">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="flex flex-col items-center text-center space-y-4 mb-16">
+        <div className="flex flex-col items-center text-center space-y-4 mb-12 md:mb-16">
           {config.badge && (
             <Badge
               variant="secondary"
@@ -29,45 +29,48 @@ export function FAQ({ config }: FAQProps) {
               {config.badge}
             </Badge>
           )}
-          <h2 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl max-w-3xl">
+          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl max-w-3xl">
             {config.heading}
           </h2>
           {config.description && (
-            <p className="max-w-2xl text-base text-muted-foreground/80 md:text-lg">
+            <p className="max-w-2xl text-sm text-muted-foreground/80 sm:text-base md:text-lg">
               {config.description}
             </p>
           )}
         </div>
 
-        <div className="max-w-3xl mx-auto space-y-4">
+        <div className="max-w-3xl mx-auto space-y-3 sm:space-y-4">
           {config.faqs.map((faq, index) => (
             <div
               key={index}
-              className="border border-border/40 rounded-2xl bg-background/50 backdrop-blur overflow-hidden transition-all duration-300 hover:border-border/60"
+              className="border border-border/40 rounded-xl sm:rounded-2xl bg-background/50 backdrop-blur overflow-hidden transition-all duration-300 hover:border-border/60"
             >
               <button
                 onClick={() => toggleFAQ(index)}
-                className="w-full px-6 py-5 flex items-center justify-between text-left transition-colors"
+                className="w-full px-4 py-4 sm:px-6 sm:py-5 flex items-center justify-between text-left transition-colors"
+                aria-expanded={openIndex === index}
+                aria-controls={`faq-answer-${index}`}
               >
-                <span className="text-lg font-semibold tracking-tight pr-4">
+                <span className="text-sm sm:text-base md:text-lg font-semibold tracking-tight pr-3 sm:pr-4 leading-snug">
                   {faq.question}
                 </span>
                 <ChevronDown
-                  className={`w-5 h-5 text-muted-foreground shrink-0 transition-transform duration-300 ${
+                  className={`w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground shrink-0 transition-transform duration-300 ${
                     openIndex === index ? "rotate-180" : ""
                   }`}
                 />
               </button>
 
               <div
+                id={`faq-answer-${index}`}
                 className={`overflow-hidden transition-all duration-300 ease-in-out ${
                   openIndex === index
                     ? "max-h-96 opacity-100"
                     : "max-h-0 opacity-0"
                 }`}
               >
-                <div className="px-6 pb-5 pt-0">
-                  <p className="text-muted-foreground/80 leading-relaxed">
+                <div className="px-4 pb-4 pt-0 sm:px-6 sm:pb-5">
+                  <p className="text-xs sm:text-sm text-muted-foreground/80 leading-relaxed">
                     {faq.answer}
                   </p>
                 </div>

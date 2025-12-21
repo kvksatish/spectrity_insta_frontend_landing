@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { LandingPageRenderer } from "@/components/landing/LandingPageRenderer";
 import { Navigation } from "@/components/landing/Navigation";
+import { InstallPrompt } from "@/components/InstallPrompt";
 import { getLandingPageConfig } from "@/lib/config-loader";
 import { useAuth } from "@/context/AuthContext";
 
@@ -13,9 +14,9 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    // Redirect authenticated users to dashboard
+    // Redirect authenticated users to essence
     if (!loading && user) {
-      router.push("/dashboard");
+      router.push("/spectrity/essence");
     }
   }, [user, loading, router]);
 
@@ -34,9 +35,10 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen overflow-x-hidden">
       <Navigation config={config.navigation} />
       <LandingPageRenderer sections={config.sections} />
+      <InstallPrompt />
     </div>
   );
 }

@@ -9,9 +9,9 @@ interface DashboardPreviewProps {
 
 export function DashboardPreview({ config }: DashboardPreviewProps) {
   return (
-    <section className="py-12 md:py-16 lg:py-20">
+    <section className="py-12 md:py-16 lg:py-20 overflow-hidden">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="relative max-w-6xl mx-auto group cursor-pointer">
+        <div className="relative max-w-6xl mx-auto group cursor-pointer overflow-hidden">
           <div className="relative rounded-2xl border border-border/40 bg-background/50 backdrop-blur p-2 shadow-2xl shadow-primary/5 transition-all duration-500 group-hover:shadow-3xl group-hover:shadow-primary/10 group-hover:border-primary/30">
             <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-muted/50">
               {config.image ? (
@@ -49,7 +49,7 @@ export function DashboardPreview({ config }: DashboardPreviewProps) {
             </div>
           </div>
           {/* Decorative gradient blur */}
-          <div className="absolute -inset-x-20 -inset-y-10 -z-10 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 blur-3xl opacity-50 transition-opacity duration-500 group-hover:opacity-70" />
+          <div className="absolute inset-0 -z-10 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 blur-3xl opacity-50 transition-opacity duration-500 group-hover:opacity-70" />
         </div>
       </div>
     </section>
