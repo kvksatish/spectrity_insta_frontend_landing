@@ -79,8 +79,8 @@ export function GuestRoute({ children }: GuestRouteProps) {
     if (loading) return;
 
     if (user) {
-      // User is logged in, redirect to dashboard
-      router.push("/dashboard");
+      // User is logged in, redirect to essence
+      router.push("/spectrity/essence");
     }
   }, [user, loading, router]);
 

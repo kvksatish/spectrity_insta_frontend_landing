@@ -63,8 +63,8 @@ function AuthCallbackContent() {
         const user = await authApi.getCurrentUser();
         updateUser(user);
 
-        // Redirect to dashboard
-        router.push("/dashboard");
+        // Redirect to essence
+        router.push("/spectrity/essence");
       } catch (err: unknown) {
         setError(getErrorMessage(err));
         tokenStorage.clearTokens();

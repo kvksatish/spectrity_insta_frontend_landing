@@ -46,7 +46,7 @@ function LoginForm() {
       if (decodedUrl && isValidReturnUrl(decodedUrl)) {
         router.push(decodedUrl);
       } else {
-        router.push("/dashboard");
+        router.push("/spectrity/essence");
       }
     } catch (err: unknown) {
       setError(getErrorMessage(err));
