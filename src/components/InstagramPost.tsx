@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Heart, MessageCircle, Send, Bookmark, MoreHorizontal, Sparkles, ChevronDown, ChevronUp, Image as ImageIcon } from 'lucide-react';
+import { Heart, MessageCircle, Send, Bookmark, MoreHorizontal, Sparkles, ChevronDown, ChevronUp, Image as ImageIcon, ExternalLink } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -10,7 +10,7 @@ interface InstagramPostProps {
   id: string;
   username: string;
   userAvatar?: string;
-  postImage: string;
+  postImage?: string; // Made optional since we'll use shortCode instead
   caption: string;
   likes: number;
   comments: number;
@@ -19,6 +19,7 @@ interface InstagramPostProps {
   isSaved?: boolean;
   aiSummary?: string;
   aiAnalysis?: string;
+  shortCode?: string; // Instagram post shortCode for linking
 }
 
 export function InstagramPost({
@@ -33,8 +34,14 @@ export function InstagramPost({
   isSaved = false,
   aiSummary,
   aiAnalysis,
+  shortCode,
 }: InstagramPostProps) {
   const [showPostDetails, setShowPostDetails] = useState(false);
+
+  // Construct Instagram URL from shortCode
+  const instagramUrl = shortCode
+    ? `https://www.instagram.com/p/${shortCode}/`
+    : null;
 
   return (
     <Card className="overflow-hidden border-0 shadow-sm mb-4">
@@ -95,53 +102,10 @@ export function InstagramPost({
                 </Avatar>
                 <span className="font-semibold text-sm">{username}</span>
               </div>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
-                <MoreHorizontal className="w-5 h-5" />
-              </Button>
             </div>
 
-            {/* Image */}
-            <div className="relative aspect-square bg-gray-100 dark:bg-gray-800">
-              <img
-                src={postImage}
-                alt={`Post by ${username}`}
-                className="w-full h-full object-cover"
-              />
-            </div>
-
-            {/* Actions */}
-            <div className="p-3 space-y-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className={`h-9 w-9 ${isLiked ? 'text-red-500' : ''}`}
-                  >
-                    <Heart
-                      className="w-6 h-6"
-                      fill={isLiked ? 'currentColor' : 'none'}
-                    />
-                  </Button>
-                  <Button variant="ghost" size="icon" className="h-9 w-9">
-                    <MessageCircle className="w-6 h-6" />
-                  </Button>
-                  <Button variant="ghost" size="icon" className="h-9 w-9">
-                    <Send className="w-6 h-6" />
-                  </Button>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className={`h-9 w-9 ${isSaved ? 'text-blue-500' : ''}`}
-                >
-                  <Bookmark
-                    className="w-6 h-6"
-                    fill={isSaved ? 'currentColor' : 'none'}
-                  />
-                </Button>
-              </div>
-
+            {/* Post Details */}
+            <div className="p-4 space-y-3">
               {/* Likes */}
               <div className="font-semibold text-sm">
                 {likes.toLocaleString()} likes
@@ -153,17 +117,35 @@ export function InstagramPost({
                 <span className="text-gray-700 dark:text-gray-300">{caption}</span>
               </div>
 
-              {/* Comments */}
+              {/* Comments Count */}
               {comments > 0 && (
-                <button className="text-sm text-gray-500 dark:text-gray-400">
-                  View all {comments} comments
-                </button>
+                <div className="text-sm text-gray-500 dark:text-gray-400">
+                  {comments} comments
+                </div>
               )}
 
               {/* Timestamp */}
               <div className="text-xs text-gray-400 dark:text-gray-500 uppercase">
                 {timestamp}
               </div>
+
+              {/* View on Instagram Button */}
+              {instagramUrl && (
+                <Button
+                  asChild
+                  className="w-full mt-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                >
+                  <a
+                    href={instagramUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    <span>View on Instagram</span>
+                  </a>
+                </Button>
+              )}
             </div>
           </div>
         )}
