@@ -38,6 +38,16 @@ function LoginForm() {
     try {
       await login(email, password, rememberMe);
 
+      // Check if redirecting from share page
+      const redirect = searchParams.get("redirect");
+      const sharedUrl = searchParams.get("url");
+
+      if (redirect === "/share" && sharedUrl) {
+        // Redirect back to share page with the URL
+        router.push(`/share?url=${encodeURIComponent(sharedUrl)}`);
+        return;
+      }
+
       // Safely redirect to return URL or dashboard
       const returnUrl = searchParams.get("returnUrl");
       const decodedUrl = returnUrl ? decodeURIComponent(returnUrl) : null;
@@ -65,6 +75,7 @@ function LoginForm() {
 
   // Show session expired message if redirected from protected route
   const sessionExpired = searchParams.get("session") === "expired";
+  const fromShare = searchParams.get("redirect") === "/share";
 
   return (
     <GuestRoute>
@@ -73,11 +84,21 @@ function LoginForm() {
           <CardHeader>
             <CardTitle>Welcome Back</CardTitle>
             <CardDescription>
-              Sign in to your account to continue
+              {fromShare
+                ? "Please sign in to scrape and view Instagram posts"
+                : "Sign in to your account to continue"}
             </CardDescription>
           </CardHeader>
 
           <CardContent>
+            {fromShare && (
+              <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md">
+                <p className="text-sm text-blue-800 dark:text-blue-200">
+                  📸 You need to sign in to scrape Instagram posts. Your shared link will be processed after login.
+                </p>
+              </div>
+            )}
+
             {sessionExpired && (
               <div className="mb-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-md">
                 <p className="text-sm text-yellow-800 dark:text-yellow-200">
