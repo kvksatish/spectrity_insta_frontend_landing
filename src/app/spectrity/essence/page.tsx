@@ -41,6 +41,7 @@ function transformPost(post: EssenceFeedPost) {
     isSaved: false,
     aiSummary: post.combined_summary,
     aiAnalysis: post.ai_visual_analysis,
+    shortCode: post.short_code, // Pass shortCode for Instagram linking
   };
 }
 
