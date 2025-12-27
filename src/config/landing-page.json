@@ -17,6 +17,7 @@
     "items": [
       { "label": "Features", "href": "#features" },
       { "label": "Pricing", "href": "#pricing" },
+      { "label": "Blog", "href": "/blog" },
       { "label": "Testimonials", "href": "#testimonials" },
       { "label": "About", "href": "#about" }
     ],
@@ -91,57 +92,54 @@
     {
       "type": "pricing",
       "badge": "Pricing",
-      "heading": "Choose the perfect plan for you",
-      "description": "Flexible pricing options for teams of all sizes",
+      "heading": "Choose Your Plan",
+      "description": "Unlock powerful AI-driven Instagram insights with flexible pricing that grows with your needs",
       "plans": [
         {
-          "name": "Starter",
-          "price": "$29",
-          "period": "per month",
-          "description": "Perfect for individuals and small projects",
+          "name": "Free",
+          "price": "$0",
+          "period": "forever",
+          "description": "Perfect for trying out the platform",
           "features": [
-            "Up to 10,000 API calls/month",
-            "Basic AI models",
-            "Email support",
-            "Community access",
-            "Basic analytics"
+            "0 requests per day",
+            "$0 daily budget",
+            "Basic support",
+            "Community access"
           ],
-          "buttonText": "Start Free Trial",
-          "buttonHref": "#trial"
+          "buttonText": "Get Started Free",
+          "buttonHref": "/register"
         },
         {
-          "name": "Professional",
-          "price": "$99",
+          "name": "Orbit",
+          "price": "$10",
           "period": "per month",
-          "description": "For growing teams and businesses",
+          "description": "Great for individuals and small projects",
           "features": [
-            "Up to 100,000 API calls/month",
-            "Advanced AI models",
-            "Priority support",
-            "Custom integrations",
-            "Advanced analytics",
-            "Team collaboration"
+            "10 requests per day",
+            "$1 daily budget",
+            "AI analysis enabled",
+            "Email support",
+            "Advanced analytics"
           ],
           "highlighted": true,
-          "buttonText": "Get Started",
-          "buttonHref": "#trial"
+          "buttonText": "Upgrade to Orbit",
+          "buttonHref": "/register"
         },
         {
-          "name": "Enterprise",
-          "price": "Custom",
-          "period": "contact us",
-          "description": "For large organizations with specific needs",
+          "name": "Launch",
+          "price": "$20",
+          "period": "per month",
+          "description": "Best for professionals and growing teams",
           "features": [
-            "Unlimited API calls",
-            "Custom AI model training",
-            "24/7 dedicated support",
-            "On-premise deployment",
-            "Advanced security features",
-            "SLA guarantee",
-            "Custom contracts"
+            "20 requests per day",
+            "$2 daily budget",
+            "AI analysis enabled",
+            "Priority support",
+            "Advanced analytics",
+            "Custom integrations"
           ],
-          "buttonText": "Contact Sales",
-          "buttonHref": "#contact"
+          "buttonText": "Upgrade to Launch",
+          "buttonHref": "/register"
         }
       ]
     },
